@@ -59,4 +59,36 @@ User.init(
   }
 );
 
+
+// const User = sequelize.define('User', {
+//   userId: {
+//     type: DataTypes.INTEGER,
+//     autoIncrement: true,
+//     primaryKey: true,
+//   },
+//   name: {
+//     type: DataTypes.STRING,
+//     allowNull: false,
+//   },
+//   email: {
+//     type: DataTypes.STRING,
+//     unique: true,
+//     allowNull: false,
+//   },
+//   phone: {
+//     type: DataTypes.STRING,
+//     allowNull: false,
+//   },
+//   address: {
+//     type: DataTypes.STRING,
+//   },
+//   password: {
+//     type: DataTypes.STRING,
+//     allowNull: false,
+//   },
+//   role: {
+//     type: DataTypes.ENUM('Admin', 'Chit Creator', 'Participant'),
+//     defaultValue: 'Participant',
+//   },
+// });
 export default User;
