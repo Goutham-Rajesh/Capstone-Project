@@ -7,6 +7,6 @@ router.get("/getchitfunds", getChitfunds);
 router.get("/getchitfundbyid/:id", getChitfundById);
 router.post("/createChitfund", createChitfund);
 router.get("/getchitfundbyparticipantid/:id", getchitfundByParticipantId);
-router.get("/updatechitfundbyid/:id", updateChitfundById);
+router.post("/updatechitfundbyid/:id", updateChitfundById);
 
 export default router;
