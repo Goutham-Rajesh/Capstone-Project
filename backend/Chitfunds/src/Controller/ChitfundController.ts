@@ -33,6 +33,9 @@ const  createChitfund = async(req:Request, res:Response)=>{
 
 const updateChitfundById = async(req:Request, res:Response)=>{
     const {participantId} = req.body;
+    console.log(participantId)
+
+    console.log(req.params.id)
     try{
         const updatedChitfund = await Chitfunds.findByIdAndUpdate(
             req.params.id,
@@ -55,4 +58,16 @@ const getchitfundByParticipantId = async(req:Request, res:Response)=>{
 }
 
 
-export {getChitfunds, getChitfundById, createChitfund,getchitfundByParticipantId,updateChitfundById};
+const getchitfundByCreatorId = async(req:Request, res:Response)=>{
+  try{
+    console.log("inside the creator")
+    console.log(req.params.id)
+      const Chitfund = await Chitfunds.find({CreatorID:req.params.id});
+      res.status(200).json(Chitfund);
+  }catch(err){
+      res.status(500).json({message:err});
+  }
+}
+
+
+export {getChitfunds, getChitfundById, createChitfund,getchitfundByParticipantId,updateChitfundById,getchitfundByCreatorId};

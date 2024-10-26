@@ -3,12 +3,20 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes';
 import sequelize from './config/database';
 import User from './models/User';
+import chitRouter from './routes/chitRoutes';
+import axios from 'axios';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use('/auth', authRoutes);
+app.use('/chit',chitRouter)
+
+
+
+
+
 
 async function initializeDatabase() {
   try {
