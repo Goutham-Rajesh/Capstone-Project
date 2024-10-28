@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/register', register);
 router.post('/login', login);
-router.get('/users', authenticateToken, authorizeRole(['Admin', 'Chit Creator', 'Participant']), async (req, res) => {
+router.get('/users', authenticateToken, authorizeRole(['Admin', 'Chit Creator']), async (req, res) => {
   const users = await User.findAll();
   res.json(users);
 });

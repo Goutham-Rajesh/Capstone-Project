@@ -19,7 +19,7 @@ const User_1 = __importDefault(require("../models/User"));
 const router = express_1.default.Router();
 router.post('/register', authController_1.register);
 router.post('/login', authController_1.login);
-router.get('/users', auth_1.authenticateToken, (0, auth_1.authorizeRole)(['Admin', 'Chit Creator', 'Participant']), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/users', auth_1.authenticateToken, (0, auth_1.authorizeRole)(['Admin', 'Chit Creator']), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield User_1.default.findAll();
     res.json(users);
 }));

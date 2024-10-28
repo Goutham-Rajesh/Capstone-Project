@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
+  console.log(req.body)
   const { name, email, phone, address, password, role } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -16,6 +17,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
+  console.log(req.body)
   const { email, password } = req.body;
   console.log(email)
   const user = await User.findOne({ where: { email } });

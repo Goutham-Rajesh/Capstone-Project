@@ -5,11 +5,13 @@ import sequelize from './config/database';
 import User from './models/User';
 import chitRouter from './routes/chitRoutes';
 import axios from 'axios';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use(cors())
 app.use('/auth', authRoutes);
 app.use('/chit',chitRouter)
 
@@ -36,3 +38,5 @@ async function initializeDatabase() {
 initializeDatabase()
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
