@@ -42,7 +42,7 @@ chitRouter.get('/getChitfundsByCreator/:id', (req, res) => __awaiter(void 0, voi
     try {
         // console.log("inside the getchitfundsParticpant")
         const id = req.params.id;
-        const response = yield axios_1.default.get(`http://127.0.0.1:3000/getchitfundbyCreatorid/{id}`);
+        const response = yield axios_1.default.get(`http://127.0.0.1:3000/getchitfundbyCreatorid/${id}`);
         console.log('Chit Funds =', response.data);
         res.status(201).json(response.data);
     }
@@ -54,7 +54,7 @@ chitRouter.get('/getChitfundsByParticipant/:id', (req, res) => __awaiter(void 0,
     try {
         console.log("inside the getchitfundsParticpant");
         const id = req.params.id;
-        const response = yield axios_1.default.get(`http://127.0.1:3000/getchitfundbyparticipantid/{id}`);
+        const response = yield axios_1.default.get(`http://127.0.1:3000/getchitfundbyparticipantid/${id}`);
         console.log('Chit Funds =', response.data);
         res.status(201).json(response.data);
     }
