@@ -6,9 +6,10 @@ import axios from 'axios';
 
 const chitRouter = express.Router();
 //, authenticateToken, authorizeRole(['Admin', 'Chit Creator', 'Participant']),
-chitRouter.post('/addChitfund', async (req, res) => {
+chitRouter.post('/addChitfund',authenticateToken,authorizeRole(['Chit Creator']) ,async (req, res) => {
     try {
-        const response = await axios.post('http://localhost:3000/createChitfund', req.body);
+      console.log(req.body)
+        const response = await axios.post('http://localhost:3000/createChitFund', req.body);
         console.log('Chit Fund created successfully:', response.data);
         res.status(201).send("chit fund created successfully")
       } catch (error) {

@@ -3,11 +3,11 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/getchitfunds", getChitfunds);
-router.get("/getchitfundbyid/:id", getChitfundById);
-router.post("/createChitfund", createChitfund);
-router.get("/getchitfundbyparticipantid/:id", getchitfundByParticipantId);
-router.get("/getchitfundbyCreatorid/:id", getchitfundByCreatorId);
-router.post("/updatechitfundbyid/:id", updateChitfundById);
+router.get("/getChitFunds", getChitfunds);
+router.get("/getChitFundById/:id", getChitfundById);
+router.post("/createChitFund", createChitfund);
+router.get("/getChitFundByParticipantId/:id", getchitfundByParticipantId);
+router.get("/getChitFundByCreatorId/:id", getchitfundByCreatorId);
+router.post("/updateChitFundById/:id", updateChitfundById);
 
 export default router;
