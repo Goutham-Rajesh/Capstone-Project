@@ -3,11 +3,13 @@ import mongoose from "mongoose";
 const ChitfundsSchema = new mongoose.Schema({
     name: String,
     totalAmount:Number,
+    maxParticipants:Number,
     duration:String,
     startDate:Date,
     EndDate:Date,
     CreatorID:Number,
-    Participants:[Number]
+    Participants:[Number],
+    chitType:String
 });
 
 export const Chitfunds = mongoose.model('Chitfunds', ChitfundsSchema);

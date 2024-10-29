@@ -13,12 +13,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const auth_1 = require("../middleware/auth");
 const axios_1 = __importDefault(require("axios"));
 const chitRouter = express_1.default.Router();
 //, authenticateToken, authorizeRole(['Admin', 'Chit Creator', 'Participant']),
-chitRouter.post('/addChitfund', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+chitRouter.post('/addChitfund', auth_1.authenticateToken, (0, auth_1.authorizeRole)(['Chit Creator']), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const response = yield axios_1.default.post('http://localhost:3000/createChitfund', req.body);
+        console.log(req.body);
+        const response = yield axios_1.default.post('http://localhost:3000/createChitFund', req.body);
         console.log('Chit Fund created successfully:', response.data);
         res.status(201).send("chit fund created successfully");
     }
