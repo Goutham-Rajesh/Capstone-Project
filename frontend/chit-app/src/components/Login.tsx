@@ -1,27 +1,16 @@
 import React, { useState } from 'react';
-import '../css/login.css';
-import axios, { AxiosResponse } from 'axios';
+import '../css/login.css'; // Keep your custom styles if needed
+import axios from 'axios';
 
+const Login: React.FC = () => {
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [role, setRole] = useState<string>('');
+    const [error, setError] = useState<string>('');
+    const [successMessage, setSuccessMessage] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
 
-interface UserAttributes {
-    userId?: number;
-    name: string;
-    email: string;
-    phone: string;
-    address?: string;
-    password: string;
-    role: 'Admin' | 'Chit Creator' | 'Participant';
-  }
-
-const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [role, setRole] = useState('');
-    const [error, setError] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
-   
-
-    const handleSubmit = async  (event: { preventDefault: () => void; }) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         try {
             console.log("inside the hadle submit")
@@ -48,7 +37,7 @@ const Login = () => {
               console.error('Error fetching data:', error);
           }
         setError('');
-        setSuccessMessage('Login successfull');
+        setSuccessMessage('');
 
         // Basic validation
         if (!email || !password || !role) {
@@ -56,58 +45,87 @@ const Login = () => {
             return;
         }
 
-        // Simulate a successful login
-        console.log('Login attempted with:', { email, password, role });
-        setSuccessMessage('Login Successful!');
+        setLoading(true);
+        try {
+            const response = await axios.post<{ token: string }>('http://localhost:5000/auth/login', { email, password });
+            const token = response.data.token;
+            localStorage.setItem('token', token);
+
+            const res = await axios.get('http://localhost:5000/auth/users', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            console.log(res.data);
+            setSuccessMessage('Login Successful!');
+            setEmail('');
+            setPassword('');
+            setRole('');
+        } catch (error) {
+            console.error('Error during login:', error);
+            setError('Login failed! Please check your credentials.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
-        <div className="login-wrapper">
-            <form className="login-form" onSubmit={handleSubmit}>
-                <h2 className="login-title">Login</h2>
-                {error && <p className="error-message">{error}</p>}
-                {successMessage && <p className="success-message">{successMessage}</p>}
-                
-                <div className="form-group">
-                    <label htmlFor="email">Email:</label>
-                    <input
-                        type="email"
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </div>
-                
-                <div className="form-group">
-                    <label htmlFor="password">Password:</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
+        <div className="container mt-5">
+            <div className="row justify-content-center">
+                <div className="col-md-4">
+                    <form className="login-form p-4 border rounded bg-light shadow" onSubmit={handleSubmit}>
+                        <h2 className="login-title text-center">Login</h2>
+                        {error && <div className="alert alert-danger">{error}</div>}
+                        {successMessage && <div className="alert alert-success">{successMessage}</div>}
+                        
+                        <div className="form-group">
+                            <label htmlFor="email">Email:</label>
+                            <input
+                                type="email"
+                                className="form-control"
+                                id="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+                        
+                        <div className="form-group">
+                            <label htmlFor="password">Password:</label>
+                            <input
+                                type="password"
+                                className="form-control"
+                                id="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
 
-                <div className="form-group">
-                    <label htmlFor="role">Role:</label>
-                    <select
-                        id="role"
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        required
-                    >
-                        <option value="">Select Role</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Chit Creator">Chit Creator</option>
-                        <option value="Participant">Participant</option>
-                    </select>
-                </div>
+                        <div className="form-group">
+                            <label htmlFor="role">Role:</label>
+                            <select
+                                className="form-control"
+                                id="role"
+                                value={role}
+                                onChange={(e) => setRole(e.target.value)}
+                                required
+                            >
+                                <option value="">Select Role</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Chit Creator">Chit Creator</option>
+                                <option value="Participant">Participant</option>
+                            </select>
+                        </div>
 
-                <button type="submit" className="submit-button">Login</button>
-            </form>
-           
+                        <button type="submit" className="btn btn-primary btn-block" disabled={loading}>
+                            {loading ? 'Logging in...' : 'Login'}
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     );
 };
