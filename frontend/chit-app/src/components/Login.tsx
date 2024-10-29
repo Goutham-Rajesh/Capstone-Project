@@ -29,6 +29,7 @@ const Login = () => {
               const response= await axios.post('http://localhost:5000/auth/login',{email,password});
              // console.log(response.data.token);
               localStorage.setItem('token',response.data.token)
+              localStorage.setItem('userId',response.data.userId)
               const token=response.data.token;
               console.log(response.data.token)
 
@@ -40,6 +41,7 @@ const Login = () => {
              
               });
               console.log(res.data)
+              
               
 
           } catch (error) {

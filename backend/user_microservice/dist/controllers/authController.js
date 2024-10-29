@@ -44,6 +44,6 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return;
     }
     const token = jsonwebtoken_1.default.sign({ userId: user.userId, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
+    res.json({ 'token': token, 'userId': user.userId });
 });
 exports.login = login;

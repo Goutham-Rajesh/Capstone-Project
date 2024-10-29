@@ -10,7 +10,7 @@ interface ChitFund {
     startDate: Date;
     endDate: Date;
     chitType: 'Savings' | 'Biddings';
-    creatorID: number;
+    CreatorID: number;
     participants: number[];
 }
 
@@ -23,7 +23,7 @@ const ChitFundForm: React.FC = () => {
         startDate: new Date(),
         endDate: new Date(),
         chitType: 'Savings', // Default type
-        creatorID: Number(localStorage.getItem('userID')) || 0, // Retrieve creator ID from localStorage
+        CreatorID: Number(localStorage.getItem('userId')) || 0, // Retrieve creator ID from localStorage
         participants: [],
     });
 
@@ -39,6 +39,7 @@ const ChitFundForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log(localStorage.getItem('token'))
+        console.log(localStorage.getItem('userId'))
         try {
           
             const response = await axios.post('http://localhost:5000/chit/addChitFund', formData,
