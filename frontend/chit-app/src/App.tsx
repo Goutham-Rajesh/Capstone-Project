@@ -5,12 +5,11 @@ import UserLoggedIn from './pages/UserLoggedIn';
 import Home from './components/Home'; // Ensure these components exist
 import Login from './components/Login'; // Ensure these components exist
 import Register from './components/Registration'; // Ensure these components exist
-import Navbar from './components/NavBar';
 
 const App: React.FC = () => {
     return (
         <Router>
-            <Navbar />
+            {/* <Navbar /> */}
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
