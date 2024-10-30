@@ -13,10 +13,12 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 
-const pages = ['Home', 'Chit Groups', 'About'];
+interface ResponsiveAppBarProps {
+  pages: string[]; // Prop for pages
+}
 const settings = ['Profile', 'Payment Details', 'Bid Details', 'Logout'];
 
-function ResponsiveAppBar() {
+function ResponsiveAppBar({pages}:ResponsiveAppBarProps) {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
