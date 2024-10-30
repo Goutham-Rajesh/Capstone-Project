@@ -3,6 +3,9 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
 
+
+
+
 export const register = async (req: Request, res: Response): Promise<void> => {
   console.log(req.body)
   const { name, email, phone, address, password, role } = req.body;
@@ -33,6 +36,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const token = jwt.sign({ userId: user.userId, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
+  const token = jwt.sign({ user: user, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
   res.json({ 'token':token,'userId':user.userId });
 };

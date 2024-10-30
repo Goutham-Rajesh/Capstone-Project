@@ -23,4 +23,8 @@ router.get('/users', auth_1.authenticateToken, (0, auth_1.authorizeRole)(['Admin
     const users = yield User_1.default.findAll();
     res.json(users);
 }));
+router.get('/user/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const users = yield User_1.default.findByPk(req.params.id);
+    res.json(users);
+}));
 exports.default = router;

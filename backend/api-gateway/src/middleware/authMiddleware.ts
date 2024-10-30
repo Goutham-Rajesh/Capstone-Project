@@ -18,6 +18,7 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
     }
 
     req.user = user ;
+   
     next(); 
   });
 };
