@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { Chitfunds } from "../Model/ChitfundsModel";
 import { Request, Response } from "express";
 
+
 const getChitfunds = async (req: Request, res: Response) => {
   try {
     const Chitfund = await Chitfunds.find();
