@@ -8,20 +8,16 @@ const router = express.Router();
 router.use(express.json());
 
 // Protect these routes with JWT authentication
-router.use('/service-a', authenticateJWT, createProxyMiddleware({
-  target: config.serviceAUrl,
+router.use('/auth', authenticateJWT, createProxyMiddleware({
+  target: 'http://localhost:3001' ,
   changeOrigin: true,
-  pathRewrite: {
-    '^/api/service-a': '', // Remove base path when forwarding
-  },
+
 }));
 
-router.use('/service-b', authenticateJWT, createProxyMiddleware({
-  target: config.serviceBUrl,
+router.use('/chit', authenticateJWT, createProxyMiddleware({
+  target: 'http://localhost:3002',
   changeOrigin: true,
-  pathRewrite: {
-    '^/api/service-b': '',
-  },
+ 
 }));
 
 export default router;

@@ -11,5 +11,9 @@ router.get('/users', authenticateToken, authorizeRole(['Admin', 'Chit Creator'])
   const users = await User.findAll();
   res.json(users);
 });
+router.get('/user/:id', async (req, res) => {
+  const users = await User.findByPk(req.params.id)
+  res.json(users);
+});
 
 export default router;
