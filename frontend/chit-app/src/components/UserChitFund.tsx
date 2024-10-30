@@ -24,7 +24,7 @@ const ChitFundComponent = () => {
     // Fetch available chit funds
     const fetchAvailableChitFunds = async () => {
       try {
-        const response = await axios.get<ChitFund[]>(`http://127.0.0.1:3000//getChitFundByParticipantId/${localStorage.getItem("userID")}`);
+        const response = await axios.get<ChitFund[]>(`http://127.0.0.1:3000/getChitFundByParticipantId/${localStorage.getItem("userId")}`);
         setJoinedChitFunds(response.data);
         console.log(response.data);
       } catch (error) {
