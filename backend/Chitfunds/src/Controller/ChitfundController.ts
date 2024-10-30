@@ -34,9 +34,6 @@ const  createChitfund = async(req:Request, res:Response)=>{
 
 const updateChitfundById = async(req:Request, res:Response)=>{
     const {participantId} = req.body;
-    console.log(participantId)
-
-    console.log(req.params.id)
     try{
         const updatedChitfund = await Chitfunds.findByIdAndUpdate(
             req.params.id,
