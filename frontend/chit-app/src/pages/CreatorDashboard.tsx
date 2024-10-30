@@ -27,6 +27,8 @@ function CreatorDashboard() {
         <div>
             <Navbar pages={['Home', 'Create Chit', 'Active Chit', 'About']} />
             {user ? <h1>Welcome {user.name}</h1> : <h1>Loading...</h1>}
+            <h2>Creator Dashboard</h2>
+            
         </div>
     )
 }
