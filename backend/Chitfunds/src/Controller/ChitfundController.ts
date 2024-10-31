@@ -67,5 +67,30 @@ const getchitfundByCreatorId = async(req:Request, res:Response)=>{
   }
 }
 
+const deleteChitfundById = async(req:Request, res:Response)=>{
+    try{
+        const deletedChitfund = await Chitfunds.findByIdAndDelete(req.params.id);
+        res.status(200).json(deletedChitfund);
+    }catch(err){
+        res.status(500).json({message:err});
+    }
+}
 
-export {getChitfunds, getChitfundById, createChitfund,getchitfundByParticipantId,updateChitfundById,getchitfundByCreatorId};
+const removeParticipantFromChitfund = async(req:Request, res:Response)=>{
+    const {participantId} = req.body;
+    try{
+        const updatedChitfund = await Chitfunds.findByIdAndUpdate(
+            req.params.id,
+            { $pull: { Participants: participantId } },
+            { new: true }
+        );
+        res.status(200).json(updatedChitfund);
+    }catch(err){
+        res.status(500).json({message:err});
+    }
+}
+
+
+
+
+export {getChitfunds, getChitfundById, createChitfund,getchitfundByParticipantId,updateChitfundById,getchitfundByCreatorId,deleteChitfundById,removeParticipantFromChitfund};

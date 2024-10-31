@@ -66,6 +66,17 @@ const ChitFundComponent = () => {
     
   }
 
+  const hadleLeave = async(chit:ChitFund)=>{
+    try{
+      const response = await axios.put(`http://127.0.0.1:3000/removeParticipantFromChitfund/${chit._id}`,
+        {participantId : localStorage.getItem('userId')})
+      setJoinedChitFunds(response.data)
+    }
+    catch(error){
+      console.error("Error updating participants:", error);
+    }
+  }
+
   return (
     <div className="container mt-5">
       <h2>Available Chit Funds</h2>
@@ -104,7 +115,7 @@ const ChitFundComponent = () => {
                     Start Date: {new Date(chit.startDate).toLocaleDateString()}<br />
                     End Date: {new Date(chit.endDate).toLocaleDateString()}<br />
                   </p>
-                  <button className="btn btn-danger">Leave</button>
+                  <button className="btn btn-danger" onClick={()=>hadleLeave(chit)}>Leave</button>
                 </div>
               </div>
             </div>

@@ -1,6 +1,7 @@
 import axios from "axios";
 import Navbar from "../components/NavBar";
 import { useEffect, useState } from "react";
+import CreatorChitFundCard from "../components/CreatorChitFundCard";
 
 function CreatorDashboard() {
     interface User {
@@ -28,6 +29,7 @@ function CreatorDashboard() {
             <Navbar pages={['Home', 'Create Chit', 'Active Chit', 'About']} />
             {user ? <h1>Welcome {user.name}</h1> : <h1>Loading...</h1>}
             <h2>Creator Dashboard</h2>
+            <CreatorChitFundCard/>
             
         </div>
     )
