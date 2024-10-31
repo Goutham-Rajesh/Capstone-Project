@@ -12,19 +12,25 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface ResponsiveAppBarProps {
-  pages: string[]; // Prop for pages
+  pages: string[];
 }
+
 const settings = ['Profile', 'Payment Details', 'Bid Details', 'Logout'];
 
-function ResponsiveAppBar({pages}:ResponsiveAppBarProps) {
+function ResponsiveAppBar({ pages }: ResponsiveAppBarProps) {
+  const navigate = useNavigate();
+  const location = useLocation(); // Get the current location
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const [activePage, setActivePage] = React.useState<string>(pages[0]); // Set the initial active page
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
+
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -33,9 +39,51 @@ function ResponsiveAppBar({pages}:ResponsiveAppBarProps) {
     setAnchorElNav(null);
   };
 
+  const handleMenuItemClick = (page: string) => {
+    setActivePage(page); // Set the active page
+    handleCloseNavMenu();
+    switch (page) {
+      case 'Home':
+        navigate('/');
+        break;
+      case 'Chit Groups':
+        navigate('/ChitFund');
+        break;
+      case 'About':
+        navigate('/about');
+        break;
+      case 'Create Chit':
+        navigate('/createChitfund');
+        break;
+      case 'Active Chit':
+        navigate('/ChitCreator');
+        break;
+      default:
+        break;
+    }
+  };
+
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  // Update activePage based on current location
+  React.useEffect(() => {
+    const path = location.pathname; // Get the current path
+    const currentPage = pages.find(page => {
+      // Map page names to paths (make sure they match your routes)
+      return (
+        (page === 'Home' && path === '/') ||
+        (page === 'Chit Groups' && path === '/ChitFund') ||
+        (page === 'About' && path === '/about') ||
+        (page === 'Create Chit' && path === '/createChitfund') ||
+        (page === 'Active Chit' && path === '/ChitCreator')
+      );
+    });
+    if (currentPage) {
+      setActivePage(currentPage); // Update the active page based on the current path
+    }
+  }, [location, pages]);
 
   return (
     <AppBar position="static">
@@ -88,7 +136,7 @@ function ResponsiveAppBar({pages}:ResponsiveAppBarProps) {
               sx={{ display: { xs: 'block', md: 'none' } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page} onClick={() => handleMenuItemClick(page)}>
                   <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
                 </MenuItem>
               ))}
@@ -117,8 +165,13 @@ function ResponsiveAppBar({pages}:ResponsiveAppBarProps) {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                onClick={() => handleMenuItemClick(page)}
+                sx={{
+                  my: 2,
+                  color: activePage === page ? 'black' : 'white',
+                  display: 'block',
+                  backgroundColor: activePage === page ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+                }}
               >
                 {page}
               </Button>
@@ -158,4 +211,5 @@ function ResponsiveAppBar({pages}:ResponsiveAppBarProps) {
     </AppBar>
   );
 }
+
 export default ResponsiveAppBar;
