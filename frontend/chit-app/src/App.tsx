@@ -8,6 +8,7 @@ import UserRegistration from './pages/UserRegistration';
 import CreatorDashboard from './pages/CreatorDashboard';
 import axios from 'axios';
 import CreateChit from './pages/CreateChitPage';
+import AboutUs from './pages/About';
 
 const App: React.FC = () => {
     const [role, setRole] = React.useState('');
@@ -45,6 +46,16 @@ const App: React.FC = () => {
         }
     };
 
+    function renderAbout() {
+        if (role === '') {
+            return <AboutUs pages={["Home", "Login", "Register", "About"]} />;
+        } else if (role === 'Chit Creator') {
+            return <AboutUs pages={["Home", "Create Chit", "Active Chit", "About"]} />;
+        } else {
+            return <AboutUs pages={["Home", "Chit Group", "About"]} />;
+        }
+    }
+
     return (
         <Router>
             <Routes>
@@ -54,6 +65,7 @@ const App: React.FC = () => {
                 <Route path="/ChitCreator" element={<CreatorDashboard />} />
                 <Route path="/createChitfund" element={<CreateChit />} />
                 <Route path="/ChitFund" element={<UserLoggedIn />} />
+                <Route path="/About" element={renderAbout()}/>
             </Routes>
         </Router>
     );
