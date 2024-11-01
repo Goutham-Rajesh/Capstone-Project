@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is included
+import axios, { AxiosResponse } from 'axios';
 
 function UserRegistration() {
     const [formData, setFormData] = useState({
@@ -13,36 +14,37 @@ function UserRegistration() {
         termsAccepted: false,
     });
 
-    const [error, setError] = useState<string>('');
+    const [error, setErrorMessage] = useState<string>('');
+    const [successMessage, setSuccessMessage] = useState<string>('');
 
+   
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value, type } = e.target;
-    
-        setFormData((prev) => ({
-            ...prev,
-            [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
-        }));
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setErrorMessage('');
+        setSuccessMessage('');
 
-        // Validate that passwords match
-        if (formData.password !== formData.confirmPassword) {
-            setError('Passwords do not match.');
+        // Basic validation
+        if (Object.values(formData).some(field => !field)) {
+            setErrorMessage('All fields are required!');
             return;
         }
 
-        // Validate terms accepted
-        if (!formData.termsAccepted) {
-            setError('You must accept the terms of service.');
-            return;
+        try {
+            const response: AxiosResponse<{ message: string }> = await axios.post('http://localhost:5000/auth/register', formData);
+            console.log(response.data);
+            setSuccessMessage('Registration Successful!');
+            setFormData({ name: '', email: '', phone: '', address: '', password: '',confirmPassword:' ' ,role: '' ,termsAccepted: true});
+        } catch (error) {
+            console.error('Error during registration:', error);
+            setErrorMessage('Unable to add the user. Please try again.');
         }
-
-        // Handle form submission logic here
-        console.log('Form submitted:', formData);
-        setError(''); // Clear error on successful submission
     };
+
 
     return (
         <section className="vh-100" style={{ backgroundColor: '#eee' }}>

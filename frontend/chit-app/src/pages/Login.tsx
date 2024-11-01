@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is included
 import loginImage from '../assets/loginImage.jpg';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function Login() {
     const navigate = useNavigate(); // Initialize the navigate function
@@ -9,13 +10,48 @@ function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(false);
+    const [role, setRole] = useState<string>('');
+    const [error, setError] = useState<string>('');
+    const [successMessage, setSuccessMessage] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        // Handle login logic here
-        console.log('Email:', email);
-        console.log('Password:', password);
-        console.log('Remember Me:', rememberMe);
+ ;
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        try {
+            console.log("inside the hadle submit")
+      
+              const response= await axios.post('http://localhost:5000/auth/login',{email,password});
+             // console.log(response.data.token);
+              localStorage.setItem('token',response.data.token)
+              localStorage.setItem('userId',response.data.userId)
+              const token=response.data.token;
+              console.log(response.data.token)
+
+              console.log(localStorage.getItem('token'))
+              const res= await axios.get('http://localhost:5000/auth/users',{headers:{
+                'Authorization':`Bearer ${token}`,
+                'Content-Type':'application/json'
+              }  
+             
+              });
+              console.log(res.data)
+              
+              
+
+          } catch (error) {
+              console.error('Error fetching data:', error);
+          }
+        setError('');
+        setSuccessMessage('');
+
+        // Basic validation
+        if (!email || !password || !role) {
+            setError('All fields are required!');
+            return;
+        }
+
+  
     };
 
     return (
