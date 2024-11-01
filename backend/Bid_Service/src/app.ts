@@ -17,9 +17,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/Bid')
 app.use(bidRoutes);
 
 // Sample route
-app.get('/', (req, res) => {
-  res.send('Welcome to the Bid Service!');
-});
+
 
 // Start the server
 app.listen(PORT, () => {

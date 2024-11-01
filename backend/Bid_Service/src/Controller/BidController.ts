@@ -14,7 +14,7 @@ const getBids = async (req: Request, res: Response) => {
 const getBidById = async (req: Request, res: Response) => {
   try {
     const bid = await Bid.findById(req.params.id);
-    res.status(200).json(Bid);
+    res.status(200).json(bid);
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -22,7 +22,7 @@ const getBidById = async (req: Request, res: Response) => {
 
 const createBid = async (req: Request, res: Response) => {
   const bid = new Bid({
-    BidID: req.body.BidID,
+   
     ChitFundID: req.body.ChitFundID,
     UserID: req.body.UserID,
     BidAmount: req.body.BidAmount,
@@ -54,6 +54,31 @@ const deleteBidById = async (req: Request, res: Response) => {
     res.status(200).json(bid);
   } catch (err) {
     res.status(500).json({ message: err });
-  }
+  } 
 };
-export { getBids, getBidById, createBid, updateBidById, deleteBidById };
+
+
+const getBidByChitFundId = async (req: Request, res:Response)=>{
+
+    try {
+      const chitFundId = req.params.chitFundId; // Retrieve ChitFundID from URL parameters
+  
+      // Find bids with the specified ChitFundID
+      const bids = await Bid.find({ ChitFundID: chitFundId });
+  
+      // If no bids found, return a 404 response
+      if (!bids || bids.length === 0) {
+        res.status(404).json({ message: 'No bids found for this ChitFundID' });
+      }
+  
+      // Return the found bids
+      res.status(200).json(bids);
+    } 
+  catch(err)
+  {
+    res.status(500).json({ message: err });
+  }
+
+}
+
+export { getBids, getBidById, createBid, updateBidById, deleteBidById,  getBidByChitFundId};

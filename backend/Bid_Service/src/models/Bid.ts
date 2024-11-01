@@ -9,7 +9,7 @@ export interface IBid extends Document {
 }
 
 const BidSchema: Schema = new Schema({
-  BidID: { type: String, required: true, unique: true },
+ // BidID: { type: String, required: true, unique: true },
   ChitFundID: { type: String, required: true },
   UserID: { type: String, required: true },
   BidAmount: { type: Number, required: true },
