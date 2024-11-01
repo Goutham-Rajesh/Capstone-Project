@@ -1,4 +1,5 @@
 import express from 'express';
+import { Request, Response } from 'express'
 import { register, login } from '../controllers/authController';
 import { authenticateToken, authorizeRole } from '../middleware/auth';
 import User from '../models/User';
@@ -14,6 +15,30 @@ router.get('/users', authenticateToken, authorizeRole(['Admin', 'Chit Creator'])
 router.get('/user/:id',authenticateToken,async (req, res) => {
   const users = await User.findByPk(req.params.id)
   res.json(users);
+});
+
+
+
+
+// Assuming authenticateToken is a middleware for authentication
+router.get('/user/email/:email', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        email: req.params.email,
+      }
+    });
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return ;
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Error retrieving user by email:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 export default router;

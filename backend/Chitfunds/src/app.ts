@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import router from "./Routes/ChitfundRoutes";
 import cors from "cors"
-const PORT = 3000;
+const PORT = 5001;
 
 const app = express();
 

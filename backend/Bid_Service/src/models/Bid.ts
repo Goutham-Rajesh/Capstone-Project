@@ -13,7 +13,8 @@ const BidSchema: Schema = new Schema({
   ChitFundID: { type: String, required: true },
   UserID: { type: String, required: true },
   BidAmount: { type: Number, required: true },
-  BidDate: { type: Date, default: Date.now }
+  BidDate: { type: Date, default: Date.now },
+  
 });
 
 export const Bid = mongoose.model<IBid>('Bid', BidSchema);

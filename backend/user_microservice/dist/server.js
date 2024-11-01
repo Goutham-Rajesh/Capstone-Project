@@ -17,14 +17,12 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const database_1 = __importDefault(require("./config/database"));
 const User_1 = __importDefault(require("./models/User"));
-const chitRoutes_1 = __importDefault(require("./routes/chitRoutes"));
 const cors_1 = __importDefault(require("cors"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
-app.use('/auth', authRoutes_1.default);
-app.use('/chit', chitRoutes_1.default);
+app.use('/', authRoutes_1.default);
 function initializeDatabase() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -32,7 +30,7 @@ function initializeDatabase() {
             yield database_1.default.authenticate();
             console.log('Database connected');
             // Sync the User model with the database
-            yield User_1.default.sync({ force: true }); // Use force: true only in development
+            yield User_1.default.sync({ alter: true }); // Use force: true only in development
             console.log('User table created successfully!');
         }
         catch (err) {

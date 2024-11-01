@@ -27,4 +27,23 @@ router.get('/user/:id', auth_1.authenticateToken, (req, res) => __awaiter(void 0
     const users = yield User_1.default.findByPk(req.params.id);
     res.json(users);
 }));
+// Assuming authenticateToken is a middleware for authentication
+router.get('/user/email/:email', auth_1.authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield User_1.default.findOne({
+            where: {
+                email: req.params.email,
+            }
+        });
+        if (!user) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+        res.json(user);
+    }
+    catch (error) {
+        console.error("Error retrieving user by email:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}));
 exports.default = router;
