@@ -9,11 +9,19 @@ import UserRegistration from './pages/UserRegistration';
 import CreatorDashboard from './pages/CreatorDashboard';
 
 const App: React.FC = () => {
+    interface HomeProps {
+        page: string[];
+      }
     return (
         <Router>
             {/* <Navbar /> */}
+           
+
+            page=localStorage.getItem('token')===''?["Home",'Login','Reqister','About']:[];
+          
+
             <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<Home pages={page}/>} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<UserRegistration />} />
                 <Route path="/ChitCreator" element={<CreatorDashboard/>} />
