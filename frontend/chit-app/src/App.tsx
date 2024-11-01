@@ -1,32 +1,59 @@
-import './App.css'
-import React from 'react';
+import './App.css';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home'; // Ensure these components exist
 import Login from './pages/Login'; // Ensure these components exist
-import ChitCreation from './components/ChitCreation';
 import UserLoggedIn from './pages/UserLoggedIn';
 import UserRegistration from './pages/UserRegistration';
 import CreatorDashboard from './pages/CreatorDashboard';
+import axios from 'axios';
+import CreateChit from './pages/CreateChitPage';
 
 const App: React.FC = () => {
-    interface HomeProps {
-        page: string[];
-      }
+    const [role, setRole] = React.useState('');
+
+    const getUser = async () => {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        if (token && userId) {
+            try {
+                const response = await axios.get(`http://127.0.0.1:5000/auth/user/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+                setRole(response.data.role);
+                console.log(response.data);
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        }
+    };
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
+    const renderHome = () => {
+        if (role === '') {
+            return <Home pages={["Home", "Login", "Register", "About"]} />;
+        } else if (role === 'Chit Creator') {
+            return <Home pages={["Home", "Create Chit", "Active Chit", "About"]} />;
+        } else {
+            return <Home pages={["Home", "Chit Group", "About"]} />;
+        }
+    };
+
     return (
         <Router>
-            {/* <Navbar /> */}
-           
-
-            page=localStorage.getItem('token')===''?["Home",'Login','Reqister','About']:[];
-          
-
             <Routes>
-                <Route path="/" element={<Home pages={page}/>} />
+                <Route path="/" element={renderHome()} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<UserRegistration />} />
-                <Route path="/ChitCreator" element={<CreatorDashboard/>} />
-                <Route path="/createChitfund" element={<ChitCreation/>} />
-                <Route path="/ChitFund" element={<UserLoggedIn/>} />
+                <Route path="/ChitCreator" element={<CreatorDashboard />} />
+                <Route path="/createChitfund" element={<CreateChit />} />
+                <Route path="/ChitFund" element={<UserLoggedIn />} />
             </Routes>
         </Router>
     );
