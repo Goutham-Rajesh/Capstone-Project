@@ -58,6 +58,12 @@ function ResponsiveAppBar({ pages }: ResponsiveAppBarProps) {
       case 'Active Chit':
         navigate('/ChitCreator');
         break;
+      case 'Login':
+        navigate('/Login');
+        break;
+      case 'Register':
+          navigate('/Register');
+          break;
       default:
         break;
     }
@@ -77,7 +83,9 @@ function ResponsiveAppBar({ pages }: ResponsiveAppBarProps) {
         (page === 'Chit Groups' && path === '/ChitFund') ||
         (page === 'About' && path === '/about') ||
         (page === 'Create Chit' && path === '/createChitfund') ||
-        (page === 'Active Chit' && path === '/ChitCreator')
+        (page === 'Active Chit' && path === '/ChitCreator') ||
+        (page === 'Login' && path === '/Login')||
+        (page === 'Register' && path === '/Register')
       );
     });
     if (currentPage) {

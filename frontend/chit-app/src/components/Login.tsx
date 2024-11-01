@@ -49,9 +49,11 @@ const Login: React.FC = () => {
         try {
             const response = await axios.post<{ token: string }>('http://localhost:5000/auth/login', { email, password });
             const token = response.data.token;
+            const userId=response.data.userId;
             localStorage.setItem('token', token);
+            localStorage.setItem('userId',userId)
 
-            const res = await axios.get('http://localhost:5000/auth/users', {
+            const res = await axios.get(`http://localhost:5000/auth/user/${localStorage.getItem()}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'

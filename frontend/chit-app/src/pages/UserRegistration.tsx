@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is included
 import axios, { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function UserRegistration() {
+    const navigate=useNavigate()
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -38,11 +40,16 @@ function UserRegistration() {
             const response: AxiosResponse<{ message: string }> = await axios.post('http://localhost:5000/auth/register', formData);
             console.log(response.data);
             setSuccessMessage('Registration Successful!');
-            setFormData({ name: '', email: '', phone: '', address: '', password: '',confirmPassword:' ' ,role: '' ,termsAccepted: true});
+            setFormData({ name: '', email: '', phone: '', address: '', password: '',confirmPassword:'' ,role: '' ,termsAccepted: true});
         } catch (error) {
             console.error('Error during registration:', error);
             setErrorMessage('Unable to add the user. Please try again.');
         }
+        setTimeout(() => {
+            navigate('/'); // Change to your desired path
+        }, 2000); // Change to 3000 for 3 seconds
+
+
     };
 
 
@@ -57,6 +64,9 @@ function UserRegistration() {
                                     <div className="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
                                         <p className="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
                                         {error && <div className="alert alert-danger">{error}</div>}
+                                        
+                                     
+
                                         <form className="mx-1 mx-md-4" onSubmit={handleSubmit}>
                                             <div className="d-flex flex-row align-items-center mb-4">
                                                 <i className="fas fa-user fa-lg me-3 fa-fw"></i>
@@ -185,6 +195,7 @@ function UserRegistration() {
                                                     I agree to all statements in <a href="#!">Terms of service</a>
                                                 </label>
                                             </div>
+                                            {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
                                             <div className="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                                                 <button type="submit" className="btn btn-primary btn-lg">Register</button>

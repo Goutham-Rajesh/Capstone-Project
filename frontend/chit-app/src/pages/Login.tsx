@@ -29,13 +29,24 @@ function Login() {
               console.log(response.data.token)
 
               console.log(localStorage.getItem('token'))
-              const res= await axios.get('http://localhost:5000/auth/users',{headers:{
+              const res= await axios.get(`http://localhost:5000/auth/user/${localStorage.getItem('userId')}`,{headers:{
                 'Authorization':`Bearer ${token}`,
                 'Content-Type':'application/json'
               }  
              
               });
               console.log(res.data)
+              if(res.data.role==='Chit Creator')
+              {
+                console.log(res.data.role)
+                navigate('/ChitCreator')
+
+              }
+              else{
+                console.log(res.data.role)
+                navigate('/ChitFund')
+
+              }
               
               
 
