@@ -22,7 +22,7 @@ const ChitFundForm: React.FC = () => {
         startDate: new Date(),
         endDate: new Date(),
         chitType: 'Savings',
-        CreatorID: Number(localStorage.getItem('userId')) || 0,
+        CreatorID: Number(sessionStorage.getItem('userId')) || 0,
         participants: [],
     });
 
@@ -34,7 +34,7 @@ const ChitFundForm: React.FC = () => {
         });
     };
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
