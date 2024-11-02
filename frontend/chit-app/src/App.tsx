@@ -54,7 +54,7 @@ const App: React.FC = () => {
             return <AboutUs pages={["Home", "Login", "Register", "About"]} />;
         } else if (role === 'Chit Creator') {
             return <AboutUs pages={["Home", "Create Chit", "Active Chit", "About"]} />;
-        } else {
+        } else if(role=== 'Participant'){
             return <AboutUs pages={["Home", "Chit Group", "About"]} />;
         }
     }
@@ -70,7 +70,6 @@ const App: React.FC = () => {
                 <Route path="/ChitFund" element={<UserLoggedIn />} />
                 <Route path="/CreatorBidPage" element={<CreatorBidPage/>} />
                 <Route path="/UserBidPage" element={<UserBidPage />} />
-             
                 <Route path="/About" element={renderAbout()}/>
             </Routes>
         </Router>

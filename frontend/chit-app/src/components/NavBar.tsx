@@ -46,7 +46,7 @@ function ResponsiveAppBar({ pages }: ResponsiveAppBarProps) {
       case 'Home':
         navigate('/');
         break;
-      case 'Chit Groups':
+      case 'Chit Group':
         navigate('/ChitFund');
         break;
       case 'About':
@@ -80,7 +80,7 @@ function ResponsiveAppBar({ pages }: ResponsiveAppBarProps) {
       // Map page names to paths (make sure they match your routes)
       return (
         (page === 'Home' && path === '/') ||
-        (page === 'Chit Groups' && path === '/ChitFund') ||
+        (page === 'Chit Group' && path === '/ChitFund') ||
         (page === 'About' && path === '/about') ||
         (page === 'Create Chit' && path === '/createChitfund') ||
         (page === 'Active Chit' && path === '/ChitCreator') ||
