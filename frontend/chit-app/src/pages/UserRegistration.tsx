@@ -37,7 +37,7 @@ function UserRegistration() {
         }
 
         try {
-            const response: AxiosResponse<{ message: string }> = await axios.post('http://localhost:5000/auth/register', formData);
+            const response: AxiosResponse<{ message: string }> = await axios.post('http://localhost:5000/register', formData);
             console.log(response.data);
             setSuccessMessage('Registration Successful!');
             setFormData({ name: '', email: '', phone: '', address: '', password: '',confirmPassword:'' ,role: '' ,termsAccepted: true});
