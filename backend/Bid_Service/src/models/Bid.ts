@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IBid extends Document {
-  BidID: string;
+//  BidID: string;
   ChitFundID: string;
   UserID: string;
   BidAmount: number;

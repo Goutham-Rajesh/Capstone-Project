@@ -14,6 +14,7 @@ interface BidData {
 
 const CreatorBidPage = () => {
     const [bids, setBids] = useState<BidData[]>([]);
+    const[amount,setAmount]=useState(0)
     const [userNames, setUserNames] = useState<{ [key: number]: string }>({});
     const location = useLocation();
 
@@ -41,6 +42,9 @@ const CreatorBidPage = () => {
 
     useEffect(() => {
         const id = location.state?.id;
+        const amount=location.state?.totalAmount
+        console.log(amount)
+        setAmount(amount)
         if (id) {
             axios.get(`http://localhost:5002/getBidByChitFundId/${id}`)
                 .then(response => {
@@ -77,8 +81,8 @@ const CreatorBidPage = () => {
                             <td>{bid.BidDate}</td>
                             <td>{userNames[bid.UserID] || 'Loading...'}</td>
                             <td>{bid.BidAmount}</td>
-                            <td>{bid.BidAmount * 0.25}</td>
-                            <td>{bid.BidAmount - bid.BidAmount * 0.25}</td>
+                            <td>{bid.BidAmount * 0.025}</td>
+                            <td>{(amount-bid.BidAmount) - (bid.BidAmount* 0.025)}</td>
                         </tr>
                     ))}
                 </tbody>

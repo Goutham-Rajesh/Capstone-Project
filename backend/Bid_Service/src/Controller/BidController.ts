@@ -30,6 +30,7 @@ const createBid = async (req: Request, res: Response) => {
   });
 
   try {
+    console.log(bid)
     const newBid = await bid.save();
     res.status(201).json(newBid);
   } catch (err) {
