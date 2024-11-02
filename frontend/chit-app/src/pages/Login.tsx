@@ -21,15 +21,15 @@ function Login() {
         try {
             console.log("inside the hadle submit")
       
-              const response= await axios.post('http://localhost:5000/auth/login',{email,password});
+              const response= await axios.post('http://localhost:5000/login',{email,password});
              // console.log(response.data.token);
-              localStorage.setItem('token',response.data.token)
-              localStorage.setItem('userId',response.data.userId)
+              sessionStorage.setItem('token',response.data.token)
+              sessionStorage.setItem('userId',response.data.userId)
               const token=response.data.token;
               console.log(response.data.token)
 
-              console.log(localStorage.getItem('token'))
-              const res= await axios.get(`http://localhost:5000/auth/user/${localStorage.getItem('userId')}`,{headers:{
+              console.log(sessionStorage.getItem('token'))
+              const res= await axios.get(`http://localhost:5000/user/${sessionStorage.getItem('userId')}`,{headers:{
                 'Authorization':`Bearer ${token}`,
                 'Content-Type':'application/json'
               }  

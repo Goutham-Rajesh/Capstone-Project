@@ -39,7 +39,7 @@ const ChitFundForm: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/chit/addChitFund', formData, {
+            const response = await axios.post('http://localhost:5001/createChitFund', formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',

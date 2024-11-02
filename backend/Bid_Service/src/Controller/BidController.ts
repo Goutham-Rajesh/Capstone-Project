@@ -62,6 +62,7 @@ const getBidByChitFundId = async (req: Request, res:Response)=>{
 
     try {
       const chitFundId = req.params.chitFundId; // Retrieve ChitFundID from URL parameters
+      
   
       // Find bids with the specified ChitFundID
       const bids = await Bid.find({ ChitFundID: chitFundId });
@@ -69,6 +70,7 @@ const getBidByChitFundId = async (req: Request, res:Response)=>{
       // If no bids found, return a 404 response
       if (!bids || bids.length === 0) {
         res.status(404).json({ message: 'No bids found for this ChitFundID' });
+        return ;
       }
   
       // Return the found bids

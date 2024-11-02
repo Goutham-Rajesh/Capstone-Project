@@ -16,8 +16,8 @@ function CreatorDashboard() {
 
     const [user, setUser] = useState<User | null>(null);
     const fetchUser = async () => {
-        const token =localStorage.getItem('token')
-        const response = await axios.get(`http://127.0.0.1:5000/auth/user/${localStorage.getItem('userId')}`,{
+        const token =sessionStorage.getItem('token')
+        const response = await axios.get(`http://127.0.0.1:5000/user/${sessionStorage.getItem('userId')}`,{
             headers: {
                 
                ' Authorization': `Bearer ${token}`,

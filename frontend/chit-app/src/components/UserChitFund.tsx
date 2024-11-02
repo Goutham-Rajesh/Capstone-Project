@@ -25,7 +25,7 @@ const ChitFundComponent = () => {
     // Fetch available chit funds
     const fetchAvailableChitFunds = async () => {
       try {
-        const response = await axios.get<ChitFund[]>(`http://127.0.0.1:3000/getChitFundByParticipantId/${localStorage.getItem("userId")}`);
+        const response = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFundByParticipantId/${sessionStorage.getItem("userId")}`);
         setJoinedChitFunds(response.data);
         console.log(response.data);
       } catch (error) {
@@ -35,7 +35,7 @@ const ChitFundComponent = () => {
 
     const fetchChitFunds = async () => {
       try {
-        const response = await axios.get<ChitFund[]>('http://127.0.0.1:3000/getChitFunds');
+        const response = await axios.get<ChitFund[]>('http://127.0.0.1:5001/getChitFunds');
         setAvailableChitFunds(response.data);
       } catch (error) {
         console.error("Error fetching chit funds:", error);
@@ -50,11 +50,11 @@ const ChitFundComponent = () => {
 
     const updateParticipants = async () => {
       try {
-        const response = await axios.post(`http://127.0.0.1:3000/updateChitFundById/${chit._id}`, {
+        const response = await axios.post(`http://127.0.0.1:5001/updateChitFundById/${chit._id}`, {
           participantId: localStorage.getItem("userId")
         });
         console.log(response.data);
-        const joinedChit = await axios.get<ChitFund[]>(`http://127.0.0.1:3000/getChitFundByParticipantId/${localStorage.getItem("userId")}`);
+        const joinedChit = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFundByParticipantId/${sessionStorage.getItem("userId")}`);
         setJoinedChitFunds(joinedChit.data);
       }
       catch (error) {
@@ -68,7 +68,7 @@ const ChitFundComponent = () => {
 
   const hadleLeave = async(chit:ChitFund)=>{
     try{
-      const response = await axios.put(`http://127.0.0.1:3000/removeParticipantFromChitfund/${chit._id}`,
+      const response = await axios.put(`http://127.0.0.1:5001/removeParticipantFromChitfund/${chit._id}`,
         {participantId : localStorage.getItem('userId')})
       setJoinedChitFunds(response.data)
     }
