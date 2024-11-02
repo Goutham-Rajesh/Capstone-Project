@@ -56,7 +56,7 @@ const CreatorChitFundCard = () => {
   }
 
   function handleInfo(chit: ChitFund): void {
-    navigate('/CreatorBidPage', { state: { id: chit._id, totalAmount:chit.totalAmount } });
+    navigate('/CreatorBidPage', { state: { id: chit._id, totalAmount:chit.totalAmount, max:chit.maxParticipants } });
     throw new Error('Function not implemented.');
   }
 

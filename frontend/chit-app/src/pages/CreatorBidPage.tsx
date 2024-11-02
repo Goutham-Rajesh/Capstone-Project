@@ -4,23 +4,25 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
 interface BidData {
-    id: number,
-    BidDate: string,
-    UserID: number,
-    BidAmount: number,
-    commissionReceived: number,
-    remaining: number
+    id: number;
+    BidDate: string;
+    UserID: number;
+    BidAmount: number;
+    commissionReceived: number;
+    remaining: number;
 }
 
 const CreatorBidPage = () => {
     const [bids, setBids] = useState<BidData[]>([]);
-    const[amount,setAmount]=useState(0)
+    const [amount, setAmount] = useState(0);
     const [userNames, setUserNames] = useState<{ [key: number]: string }>({});
+    const [totalCommission, setTotalCommission] = useState(0);
+    const [maxChitAllowed ,setMaxChitAllowed]=useState(0)
+
     const location = useLocation();
 
     // Function to fetch and cache user name by user ID
     const fetchUserName = async (userID: number) => {
-        // Avoid fetching if already in cache
         if (userNames[userID]) return;
 
         try {
@@ -30,7 +32,6 @@ const CreatorBidPage = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            // Update user names state with fetched name
             setUserNames(prevUserNames => ({
                 ...prevUserNames,
                 [userID]: res.data.name
@@ -42,9 +43,8 @@ const CreatorBidPage = () => {
 
     useEffect(() => {
         const id = location.state?.id;
-        const amount=location.state?.totalAmount
-        console.log(amount)
-        setAmount(amount)
+       
+        
         if (id) {
             axios.get(`http://localhost:5002/getBidByChitFundId/${id}`)
                 .then(response => {
@@ -59,6 +59,23 @@ const CreatorBidPage = () => {
                 });
         }
     }, [location.state]);
+
+    useEffect(() => {
+        const total = bids.reduce((acc, each) => {
+            return acc + (0.025 * each.BidAmount);
+        }, 0);
+        setTotalCommission(total);
+        const amount = location.state?.totalAmount;
+        console.log(amount)
+        const maxChitAllowed=location.state?.max;
+        if (amount) {
+            setAmount(amount);
+        }
+        console.log(maxChitAllowed)
+        if (maxChitAllowed) {
+            setMaxChitAllowed(maxChitAllowed)
+        }
+    }, [bids]);
 
     return (
         <>
@@ -81,12 +98,45 @@ const CreatorBidPage = () => {
                             <td>{bid.BidDate}</td>
                             <td>{userNames[bid.UserID] || 'Loading...'}</td>
                             <td>{bid.BidAmount}</td>
-                            <td>{bid.BidAmount * 0.025}</td>
-                            <td>{(amount-bid.BidAmount) - (bid.BidAmount* 0.025)}</td>
+                            <td>{(bid.BidAmount * 0.025).toFixed(2)}</td>
+                            <td>{(amount - bid.BidAmount - (bid.BidAmount * 0.025)).toFixed(2)}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+     
+            <div className="container">
+            <div className="row">
+                <div className="col text-right">
+                    <button className="btn btn-primary position-fixed" style={{ right: '20px' }}>
+                        Add Bid
+                    </button>
+                </div>
+            </div>
+
+            {/* Add margin to the top of the card section */}
+            <div className="row row-cols-1 row-cols-md-2 g-4 mt-5"> {/* mt-5 adds margin-top */}
+                <div className="col">
+                    <div className="card">
+                        
+                        <div className="card-body">
+                            <h5 className="card-title">Total Commission Received:</h5>
+                            <p className="card-text">{totalCommission.toFixed(2)}</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="col">
+                    <div className="card">
+                        
+                        <div className="card-body">
+                            <h5 className="card-title">Number of chits remaining:</h5>
+                            <p className="card-text">{maxChitAllowed - bids.length}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
         </>
     );
 };
