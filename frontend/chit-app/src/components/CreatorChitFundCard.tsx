@@ -41,9 +41,9 @@ const CreatorChitFundCard = () => {
 
     const deleteChitGroup = async () => {
       try {
-        const response = await axios.delete(`http://127.0.0.1:3000/deleteChitFundById/${chit._id}`);
+        const response = await axios.delete(`http://127.0.0.1:5001/deleteChitFundById/${chit._id}`);
         console.log(response.data);
-        const updatedchit = await axios.get<ChitFund[]>(`http://127.0.0.1:3000/getChitFundByCreatorId/${sessionStorage.getItem("userId")}`);
+        const updatedchit = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFundByCreatorId/${sessionStorage.getItem("userId")}`);
         setAvailableChitFunds(updatedchit.data);
       }
       catch (error) {

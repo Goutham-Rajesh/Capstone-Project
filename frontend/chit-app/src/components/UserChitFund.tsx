@@ -51,7 +51,7 @@ const ChitFundComponent = () => {
     const updateParticipants = async () => {
       try {
         const response = await axios.post(`http://127.0.0.1:5001/updateChitFundById/${chit._id}`, {
-          participantId: localStorage.getItem("userId")
+          participantId: sessionStorage.getItem("userId")
         });
         console.log(response.data);
         const joinedChit = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFundByParticipantId/${sessionStorage.getItem("userId")}`);
@@ -69,7 +69,7 @@ const ChitFundComponent = () => {
   const hadleLeave = async(chit:ChitFund)=>{
     try{
       const response = await axios.put(`http://127.0.0.1:5001/removeParticipantFromChitfund/${chit._id}`,
-        {participantId : localStorage.getItem('userId')})
+        {participantId : sessionStorage.getItem('userId')})
       setJoinedChitFunds(response.data)
     }
     catch(error){

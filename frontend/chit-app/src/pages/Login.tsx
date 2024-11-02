@@ -25,8 +25,10 @@ function Login() {
              // console.log(response.data.token);
               sessionStorage.setItem('token',response.data.token)
               sessionStorage.setItem('userId',response.data.userId)
+              sessionStorage.setItem('role',response.data.role)
               const token=response.data.token;
               console.log(response.data.token)
+              console.log(sessionStorage.getItem('role'))
 
               console.log(sessionStorage.getItem('token'))
               const res= await axios.get(`http://localhost:5000/user/${sessionStorage.getItem('userId')}`,{headers:{
