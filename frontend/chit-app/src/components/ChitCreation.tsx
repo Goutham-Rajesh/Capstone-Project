@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface ChitFund {
     name: string;
@@ -14,6 +15,7 @@ interface ChitFund {
 }
 
 const ChitFundForm: React.FC = () => {
+    const navigate=useNavigate();
     const [formData, setFormData] = useState<ChitFund>({
         name: '',
         totalAmount: 0,
@@ -49,6 +51,7 @@ const ChitFundForm: React.FC = () => {
         } catch (error) {
             console.error('Error creating Chit Fund:', error);
         }
+        navigate('/ChitCreator');
     };
 
     return (

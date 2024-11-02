@@ -34,6 +34,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     console.log(email);
     const user = yield User_1.default.findOne({ where: { email } });
+    console.log(user);
     if (!user) {
         res.status(400).json({ message: 'User not found' });
         return;

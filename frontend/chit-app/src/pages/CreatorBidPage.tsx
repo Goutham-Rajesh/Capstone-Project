@@ -17,11 +17,15 @@ const CreatorBidPage = () => {
     const [amount, setAmount] = useState(0);
     const [userNames, setUserNames] = useState<{ [key: number]: string }>({});
     const [totalCommission, setTotalCommission] = useState(0);
-    const [maxChitAllowed ,setMaxChitAllowed]=useState(0)
+    const [maxChitAllowed, setMaxChitAllowed] = useState(0);
+
+    const [showModal, setShowModal] = useState(false);
+    const [bidDate, setBidDate] = useState('');
+    const [email, setEmail] = useState('');
+    const [bidAmount, setBidAmount] = useState(0);
 
     const location = useLocation();
 
-    // Function to fetch and cache user name by user ID
     const fetchUserName = async (userID: number) => {
         if (userNames[userID]) return;
 
@@ -43,15 +47,11 @@ const CreatorBidPage = () => {
 
     useEffect(() => {
         const id = location.state?.id;
-       
-        
         if (id) {
             axios.get(`http://localhost:5002/getBidByChitFundId/${id}`)
                 .then(response => {
                     const bidsData = response.data;
                     setBids(bidsData);
-
-                    // Fetch user names for each unique UserID in bidsData
                     bidsData.forEach((bid: BidData) => fetchUserName(bid.UserID));
                 })
                 .catch(error => {
@@ -66,16 +66,24 @@ const CreatorBidPage = () => {
         }, 0);
         setTotalCommission(total);
         const amount = location.state?.totalAmount;
-        console.log(amount)
-        const maxChitAllowed=location.state?.max;
-        if (amount) {
-            setAmount(amount);
-        }
-        console.log(maxChitAllowed)
-        if (maxChitAllowed) {
-            setMaxChitAllowed(maxChitAllowed)
-        }
+        const maxChitAllowed = location.state?.max;
+
+        if (amount) setAmount(amount);
+        if (maxChitAllowed) setMaxChitAllowed(maxChitAllowed);
     }, [bids]);
+
+    const handleAddBid = () => {
+        // Logic to submit the bid
+        const newBid = { BidDate: bidDate, email, BidAmount: bidAmount };
+        console.log("Submitting new bid:", newBid);
+        // Here you could add your API call to submit the bid
+
+        // Reset fields and close modal
+        setBidDate('');
+        setEmail('');
+        setBidAmount(0);
+        setShowModal(false);
+    };
 
     return (
         <>
@@ -104,39 +112,70 @@ const CreatorBidPage = () => {
                     ))}
                 </tbody>
             </table>
-     
+
             <div className="container">
-            <div className="row">
-                <div className="col text-right">
-                    <button className="btn btn-primary position-fixed" style={{ right: '20px' }}>
-                        Add Bid
-                    </button>
+                <div className="row">
+                    <div className="col text-right">
+                        <button 
+                            className="btn btn-primary position-fixed" 
+                            style={{ right: '20px' }} 
+                            onClick={() => setShowModal(true)}
+                        >
+                            Add Bid
+                        </button>
+                    </div>
+                </div>
+
+                <div className="row row-cols-1 row-cols-md-2 g-4 mt-5">
+                    <div className="col">
+                        <div className="card">
+                            <div className="card-body">
+                                <h5 className="card-title">Total Commission Received:</h5>
+                                <p className="card-text">{totalCommission.toFixed(2)}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col">
+                        <div className="card">
+                            <div className="card-body">
+                                <h5 className="card-title">Number of chits remaining:</h5>
+                                <p className="card-text">{maxChitAllowed - bids.length}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Add margin to the top of the card section */}
-            <div className="row row-cols-1 row-cols-md-2 g-4 mt-5"> {/* mt-5 adds margin-top */}
-                <div className="col">
-                    <div className="card">
-                        
-                        <div className="card-body">
-                            <h5 className="card-title">Total Commission Received:</h5>
-                            <p className="card-text">{totalCommission.toFixed(2)}</p>
+            {/* Modal for adding a bid */}
+            {showModal && (
+                <div className="modal fade show" style={{ display: 'block' }} aria-labelledby="exampleModalLabel" aria-hidden="false">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">Add Bid</h5>
+                                <button type="button" className="btn-close" onClick={() => setShowModal(false)} aria-label="Close"></button>
+                            </div>
+                            <div className="modal-body">
+                                <form>
+                                    <div className="form-outline mb-4">
+                                        <input type="date" className="form-control" value={bidDate} onChange={(e) => setBidDate(e.target.value)} />
+                                        <label className="form-label">Date</label>
+                                    </div>
+                                    <div className="form-outline mb-4">
+                                        <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                        <label className="form-label">Email address</label>
+                                    </div>
+                                    <div className="form-outline mb-4">
+                                        <input type="number" className="form-control" value={bidAmount} onChange={(e) => setBidAmount(Number(e.target.value))} />
+                                        <label className="form-label">Bid Amount</label>
+                                    </div>
+                                    <button type="button" className="btn btn-primary" onClick={handleAddBid}>Submit</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div className="col">
-                    <div className="card">
-                        
-                        <div className="card-body">
-                            <h5 className="card-title">Number of chits remaining:</h5>
-                            <p className="card-text">{maxChitAllowed - bids.length}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-       
+            )}
         </>
     );
 };

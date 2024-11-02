@@ -23,6 +23,7 @@ function Login() {
       
               const response= await axios.post('http://localhost:5000/login',{email,password});
              // console.log(response.data.token);
+             console.log(response)
               sessionStorage.setItem('token',response.data.token)
               sessionStorage.setItem('userId',response.data.userId)
               sessionStorage.setItem('role',response.data.role)
