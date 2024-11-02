@@ -24,6 +24,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
   console.log(email)
   const user = await User.findOne({ where: { email } });
+  console.log(user)
 
   if (!user) {
     res.status(400).json({ message: 'User not found' });
