@@ -71,6 +71,7 @@ const App: React.FC = () => {
                 <Route path="/ChitFund" element={<UserLoggedIn />} />
                 <Route path="/CreatorBidPage" element={<CreatorBidPage/>} />
                 <Route path="/UserBidPage" element={<UserBidPage />} />
+                <Route path="/UserProfile" element={< UserProfile />} />
                 <Route path="/About" element={renderAbout()}/>
             </Routes>
         </Router>
