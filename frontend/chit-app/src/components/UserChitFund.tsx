@@ -2,16 +2,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/UserChitFund.css'; // Ensure this file contains the CSS for hover effects
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { env } from 'process';
 
 interface ChitFund {
-  _id: string; // Change this to string if needed
+  _id: string;
   name: string;
   totalAmount: number;
   maxParticipants: number;
   duration: string;
-  startDate: Date; // Or string, depending on your API response
-  endDate: Date; // Or string, depending on your API response
+  startDate: Date;
+  endDate: Date;
   creatorID: number;
   participants: number[];
   chitType: string;
@@ -31,31 +30,28 @@ const ChitFundComponent = () => {
   const [availableChitFunds, setAvailableChitFunds] = useState<ChitFund[]>([]);
   const [joinedChitFunds, setJoinedChitFunds] = useState<ChitFund[]>([]);
   const [user, setUser] = useState<User | null>(null);
-    const fetchUser = async () => {
-        const token =sessionStorage.getItem('token')
-        const response = await axios.get(`http://127.0.0.1:5000/user/${sessionStorage.getItem('userId')}`,{
-            headers: {
-                
-               ' Authorization': `Bearer ${token}`,
-                
-            'Content-Type':'application/json'
-                 // Set the token in the Authorization header
-            },
-        });
-        setUser(response.data);
-    }
 
-    useEffect(() => {
-        fetchUser();
-    }, []);
+
+  const fetchUser = async () => {
+    const token = sessionStorage.getItem('token');
+    const response = await axios.get(`http://127.0.0.1:5000/user/${sessionStorage.getItem('userId')}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    setUser(response.data);
+  };
 
   useEffect(() => {
-    // Fetch available chit funds
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
     const fetchAvailableChitFunds = async () => {
       try {
         const response = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFundByParticipantId/${sessionStorage.getItem("userId")}`);
         setJoinedChitFunds(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching available chit funds:", error);
       }
@@ -72,16 +68,24 @@ const ChitFundComponent = () => {
 
     fetchChitFunds();
     fetchAvailableChitFunds();
-  }, []); // Make sure to add an empty dependency array to run this effect only once
+  }, []);
 
   function handleClick(chit: ChitFund): void {
+    // Use optional chaining and default to an empty array
+    const currentParticipants = chit.participants || [];
+    
+    if (currentParticipants.length >= chit.maxParticipants) {
+      alert("Maximum participants reached for this chit fund.");
+      return;
+    }
+  
     const updateParticipants = async () => {
       try {
         const response = await axios.post(`http://127.0.0.1:5001/updateChitFundById/${chit._id}`, {
           participantId: sessionStorage.getItem("userId"),
         });
         console.log(response.data);
-        
+  
         // Remove the chit from availableChitFunds
         setAvailableChitFunds((prev) => prev.filter((c) => c._id !== chit._id));
   
@@ -97,16 +101,16 @@ const ChitFundComponent = () => {
   }
   
 
-  const hadleLeave = async (chit: ChitFund) => {
+  const handleLeave = async (chit: ChitFund) => {
     try {
       await axios.put(`http://127.0.0.1:5001/removeParticipantFromChitfund/${chit._id}`, {
         participantId: sessionStorage.getItem('userId'),
       });
-  
+
       // Re-fetch the updated list of joined chit funds
       const joinedChit = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFundByParticipantId/${sessionStorage.getItem("userId")}`);
       setJoinedChitFunds(joinedChit.data);
-  
+
       // Add the left chit back to available chit funds
       setAvailableChitFunds((prev) => {
         if (!prev.find(c => c._id === chit._id)) {
@@ -118,8 +122,6 @@ const ChitFundComponent = () => {
       console.error("Error updating participants:", error);
     }
   };
-  
-  
 
   return (
     <div className="container mt-5">
@@ -138,7 +140,7 @@ const ChitFundComponent = () => {
                   Start Date: {new Date(chit.startDate).toLocaleDateString()}<br />
                   End Date: {new Date(chit.endDate).toLocaleDateString()}<br />
                 </p>
-                <button className="btn btn-primary" onClick={()=>handleClick(chit)}>Join</button>
+                <button className="btn btn-primary" onClick={() => handleClick(chit)}>Join</button>
               </div>
             </div>
           </div>
@@ -150,7 +152,7 @@ const ChitFundComponent = () => {
         {joinedChitFunds.length > 0 ? (
           joinedChitFunds.map(chit => (
             <div className="col-md-4 mb-4" key={chit._id}>
-              <div className="card chit-card"> {/* Added class for hover effect */}
+              <div className="card chit-card">
                 <div className="card-body">
                   <h5 className="card-title">{chit.name}</h5>
                   <p className="card-text">
@@ -160,7 +162,7 @@ const ChitFundComponent = () => {
                     Start Date: {new Date(chit.startDate).toLocaleDateString()}<br />
                     End Date: {new Date(chit.endDate).toLocaleDateString()}<br />
                   </p>
-                  <button className="btn btn-danger" onClick={()=>hadleLeave(chit)}>Leave</button>
+                  <button className="btn btn-danger" onClick={() => handleLeave(chit)}>Leave</button>
                 </div>
               </div>
             </div>
