@@ -12,11 +12,11 @@ interface Users{
 
 router.post('/register', register);
 router.post('/login', login);
-router.get('/users', authenticateToken, authorizeRole(['Admin', 'Chit Creator']), async (req, res) => {
+router.get('/users',async (req, res) => {
   const users = await User.findAll();
   res.json(users);
 });
-router.get('/user/:id',authenticateToken,async (req, res) => {
+router.get('/user/:id',async (req, res) => {
   const users = await User.findByPk(req.params.id)
   res.json(users);
 });
