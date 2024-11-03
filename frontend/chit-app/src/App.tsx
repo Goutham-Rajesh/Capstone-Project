@@ -11,7 +11,7 @@ import CreateChit from './pages/CreateChitPage';
 import AboutUs from './pages/About';
 import CreatorBidPage from './pages/CreatorBidPage';
 import UserBidPage from './pages/UserBidPage';
-//import BidCreation from './pages/BidCreation';
+import UserProfile from './pages/UserProfilePage';
 
 const App: React.FC = () => {
     const [role, setRole] = React.useState('');
@@ -71,6 +71,7 @@ const App: React.FC = () => {
                 <Route path="/CreatorBidPage" element={<CreatorBidPage/>} />
                 <Route path="/UserBidPage" element={<UserBidPage />} />
                 <Route path="/About" element={renderAbout()}/>
+                <Route path="/UserProfile" element={<UserProfile/>}/>
             </Routes>
         </Router>
     );
