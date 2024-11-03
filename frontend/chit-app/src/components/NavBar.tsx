@@ -16,16 +16,17 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 interface ResponsiveAppBarProps {
   pages: string[];
+  isLoggedIn: boolean; // New prop for user login status
 }
 
 const settings = ['Profile', 'Payment Details', 'Bid Details', 'Logout'];
 
-function ResponsiveAppBar({ pages }: ResponsiveAppBarProps) {
+function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
   const navigate = useNavigate();
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const [activePage, setActivePage] = React.useState<string>(pages[0]); // Set the initial active page
+  const [activePage, setActivePage] = React.useState<string>(pages[0]);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -40,7 +41,7 @@ function ResponsiveAppBar({ pages }: ResponsiveAppBarProps) {
   };
 
   const handleMenuItemClick = (page: string) => {
-    setActivePage(page); // Set the active page
+    setActivePage(page);
     handleCloseNavMenu();
     switch (page) {
       case 'Home':
@@ -62,34 +63,52 @@ function ResponsiveAppBar({ pages }: ResponsiveAppBarProps) {
         navigate('/Login');
         break;
       case 'Register':
-          navigate('/Register');
-          break;
+        navigate('/Register');
+        break;
       default:
         break;
     }
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (setting: string) => {
     setAnchorElUser(null);
+    switch (setting) {
+      case 'Profile':
+        navigate('/UserProfile'); // Navigate to UserProfile
+        break;
+      case 'Payment Details':
+        navigate('/PaymentDetails'); // Assuming you have this route
+        break;
+      case 'Bid Details':
+        navigate('/BidDetails'); // Assuming you have this route
+        break;
+      case 'Logout':
+        // Handle logout logic here, e.g., clear user session
+        break;
+      default:
+        break;
+    }
   };
 
   // Update activePage based on current location
   React.useEffect(() => {
-    const path = location.pathname; // Get the current path
+    const path = location.pathname;
     const currentPage = pages.find(page => {
-      // Map page names to paths (make sure they match your routes)
       return (
         (page === 'Home' && path === '/') ||
         (page === 'Chit Group' && path === '/ChitFund') ||
         (page === 'About' && path === '/about') ||
         (page === 'Create Chit' && path === '/createChitfund') ||
         (page === 'Active Chit' && path === '/ChitCreator') ||
-        (page === 'Login' && path === '/Login')||
+        (page === 'Login' && path === '/Login') ||
         (page === 'Register' && path === '/Register')
       );
     });
+
     if (currentPage) {
-      setActivePage(currentPage); // Update the active page based on the current path
+      setActivePage(currentPage);
+    } else {
+      setActivePage('Home'); // Default to Home if no match is found
     }
   }, [location, pages]);
 
@@ -185,35 +204,37 @@ function ResponsiveAppBar({ pages }: ResponsiveAppBarProps) {
               </Button>
             ))}
           </Box>
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+          {isLoggedIn && (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={() => setAnchorElUser(null)}
+              >
+                {settings.map((setting) => (
+                  <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
+                    <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

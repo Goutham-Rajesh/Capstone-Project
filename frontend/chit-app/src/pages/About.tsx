@@ -11,7 +11,7 @@ interface HomeProps {
 const AboutUs: React.FC<HomeProps> = ({ pages }) => {
   return (
     <>
-      <Navbar pages={pages} />
+      <Navbar pages={pages} isLoggedIn={false} />
       <About/>
     </>
   )
