@@ -28,6 +28,7 @@ router.get('/user/:id', auth_1.authenticateToken, (req, res) => __awaiter(void 0
     const users = yield User_1.default.findByPk(req.params.id);
     res.json(users);
 }));
+router.patch('/userProfile/:id', authController_1.updateUserProfile); // New route for updating user profile
 // Assuming authenticateToken is a middleware for authentication
 router.get('/user/email/:email', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

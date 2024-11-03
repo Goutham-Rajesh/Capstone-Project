@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Label } from 'recharts';
-import { Container, Row, Col, Card, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Card, Spinner, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 
 interface ChitFund {
@@ -16,6 +16,7 @@ interface User {
   name: string;
   email: string;
   phone: string;
+  profilePic?: string; // Optional field for profile picture
   joinedChitFunds: ChitFund[];
   availableChitFunds: ChitFund[];
 }
@@ -27,6 +28,8 @@ const UserProfileComponent: React.FC = () => {
   const [totalProfit, setTotalProfit] = useState<number>(0);
   const [joinedChitFunds, setJoinedChitFunds] = useState<ChitFund[]>([]);
   const [availableChitFunds, setAvailableChitFunds] = useState<ChitFund[]>([]);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -42,7 +45,7 @@ const UserProfileComponent: React.FC = () => {
             'Content-Type': 'application/json',
           },
         });
-        
+
         const joinedChitFundsData = joinedChitResponse.data;
         setJoinedChitFunds(joinedChitFundsData);
 
@@ -71,7 +74,7 @@ const UserProfileComponent: React.FC = () => {
             'Content-Type': 'application/json',
           },
         });
-        
+
         const allChitFunds = availableChitResponse.data;
         const availableChits = allChitFunds.filter(chit => !joinedChitFundsData.some(joined => joined._id === chit._id));
         setAvailableChitFunds(availableChits);
@@ -84,7 +87,7 @@ const UserProfileComponent: React.FC = () => {
           },
         });
         setUser(userResponse.data);
-        
+
       } catch (error) {
         console.error("Error fetching user profile:", error);
       } finally {
@@ -104,6 +107,38 @@ const UserProfileComponent: React.FC = () => {
 
   const totalAmount = totalInvestment + totalProfit;
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setImageFile(event.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append('file', imageFile);
+      formData.append('upload_preset', 'new_preset'); // Replace with your Cloudinary upload preset
+
+      try {
+        const response = await axios.post('https://api.cloudinary.com/v1_1/dwabgca1d/image/upload', formData);
+        const profilePicUrl = response.data.secure_url;
+        console.log('Image uploaded successfully:', profilePicUrl);
+
+        // Send the profile picture URL to your backend to save it
+        await axios.patch(`http://127.0.0.1:5000/userProfile/${user?.userId}`, { profilePic: profilePicUrl });
+
+        // Update user state
+        setUser(prevUser => ({
+          ...prevUser!,
+          profilePic: profilePicUrl,
+        }));
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
+    }
+  };
+
+
   return (
     <Container className="mt-5">
       {loading ? (
@@ -114,8 +149,20 @@ const UserProfileComponent: React.FC = () => {
             <Card className="mb-4">
               <Card.Body>
                 <Card.Title>User Profile: {user.name}</Card.Title>
-                <Card.Text>Email: {user.email}</Card.Text>
+                {user.profilePic && (
+                  <img
+                    src={user.profilePic}
+                    alt="Profile"
+                    style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover' }}
+                  />
+                )}                <Card.Text>Email: {user.email}</Card.Text>
                 <Card.Text>Phone: {user.phone}</Card.Text>
+                {/* Profile Picture Upload */}
+                <Form.Group controlId="formFile">
+                  <Form.Label>Upload Profile Picture</Form.Label>
+                  <Form.Control type="file" onChange={handleFileChange} />
+                </Form.Group>
+                <Button variant="primary" onClick={handleUpload}>Upload</Button>
               </Card.Body>
             </Card>
 

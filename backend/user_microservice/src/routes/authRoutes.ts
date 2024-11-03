@@ -1,6 +1,6 @@
 import express from 'express';
 import { Request, Response } from 'express'
-import { register, login } from '../controllers/authController';
+import { register, login, updateUserProfile } from '../controllers/authController';
 import { authenticateToken, authorizeRole } from '../middleware/auth';
 import User from '../models/User';
 import bcrypt from 'bcryptjs';
@@ -20,6 +20,8 @@ router.get('/user/:id',authenticateToken,async (req, res) => {
   const users = await User.findByPk(req.params.id)
   res.json(users);
 });
+router.patch('/userProfile/:id', updateUserProfile); // New route for updating user profile
+
 
 
 

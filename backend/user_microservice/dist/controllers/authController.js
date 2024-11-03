@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.register = void 0;
+exports.updateUserProfile = exports.login = exports.register = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = __importDefault(require("../models/User"));
@@ -48,3 +48,15 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json({ 'token': token, 'userId': user.userId, 'role': user.role });
 });
 exports.login = login;
+const updateUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.params.id;
+    const { profilePic } = req.body; // Get the profile picture URL from request body
+    try {
+        yield User_1.default.update({ profilePic }, { where: { userId } });
+        res.status(200).json({ message: 'User profile updated successfully' });
+    }
+    catch (error) {
+        res.status(400).json({ message: 'Error updating user profile', error: error.message });
+    }
+});
+exports.updateUserProfile = updateUserProfile;
