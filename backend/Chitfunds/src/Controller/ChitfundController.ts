@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Chitfunds } from "../Model/ChitfundsModel";
 import { Request, Response } from "express";
+import axios from 'axios'
 
 
 const getChitfunds = async (req: Request, res: Response) => {
@@ -91,6 +92,57 @@ const removeParticipantFromChitfund = async(req:Request, res:Response)=>{
 }
 
 
+//chitFund/participants/email/
 
 
-export {getChitfunds, getChitfundById, createChitfund,getchitfundByParticipantId,updateChitfundById,getchitfundByCreatorId,deleteChitfundById,removeParticipantFromChitfund};
+const getParticipantEmails = async (req:Request, res:Response)=> {
+    try {
+        const chitFund = await Chitfunds.findById(req.params.id);
+        
+        
+
+      let participants:number[]=[]
+      if(!chitFund)
+      {
+        res.status(404).json({message:"chit fund not found"});
+
+      }
+      else{
+        participants=chitFund.Participants;
+      }
+
+        // Initialize an array to store emails
+        const emails: string[] = []; // Specify that emails is an array of strings
+
+        // Loop through each participant ID to fetch the email
+        for (const id of participants) {
+            try {
+                const response = await axios.get(`http://localhost:5000/user/getemail/${id}`);
+                emails.push(response.data.email);
+            } catch (err) {
+                console.error(`Error fetching email for user ID ${id}:`, err);
+            }
+        }
+
+        // Send the list of emails as response
+        res.status(200).json({ emails:emails }); // Use return here for consistency
+
+    } catch (err) {
+         res.status(500).json({ message: "Error fetching chit fund data" });
+    }
+};
+
+    
+   
+    
+
+    
+
+
+
+
+
+
+
+
+export {getChitfunds, getChitfundById, createChitfund,getchitfundByParticipantId,updateChitfundById,getchitfundByCreatorId,deleteChitfundById,removeParticipantFromChitfund,getParticipantEmails};

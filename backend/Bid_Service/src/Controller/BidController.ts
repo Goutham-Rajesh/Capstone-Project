@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Bid } from "../models/Bid";
 import { Request, Response } from "express";
+import axios from "axios";
 
 const getBids = async (req: Request, res: Response) => {
   try {
@@ -84,4 +85,41 @@ const getBidByChitFundId = async (req: Request, res:Response)=>{
 
 }
 
-export { getBids, getBidById, createBid, updateBidById, deleteBidById,  getBidByChitFundId};
+const getEmailsOfChitWinners = async (req: Request, res: Response) => {
+  try {
+      const chitFundId = req.params.id; // Retrieve ChitFundID from URL parameters
+
+      // Find bids with the specified ChitFundID
+      const bids = await Bid.find({ ChitFundID:chitFundId });
+      console.log(bids)
+
+      // If no bids found, return a 404 response
+      if (!bids || bids.length === 0) {
+          res.status(404).json({ message: 'No bids found for this ChitFundID' });
+      }
+
+      // Extract UserIDs from the bids
+      const userIds = bids.map(bid => bid.UserID);
+      const uniqueUserIds = [...new Set(userIds)]; // Get unique UserIDs to avoid duplicate API calls
+
+      const emails: string[] = []; // Specify that emails is an array of strings
+
+      // Loop through each unique UserID to fetch the email
+      for (const id of uniqueUserIds) {
+          try {
+              const response = await axios.get(`http://localhost:5000/user/getemail/${id}`);
+              emails.push(response.data.email); // Assuming the response contains an 'email' field
+          } catch (err) {
+              console.error(`Error fetching email for user ID ${id}:`, err);
+          }
+      }
+
+      // Send the list of emails as response
+      res.status(200).json({ emails });
+  } catch (err) {
+      console.error("Error fetching emails:", err);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export { getBids, getBidById, createBid, updateBidById, deleteBidById,  getBidByChitFundId,getEmailsOfChitWinners};

@@ -8,8 +8,19 @@ interface BidData {
     BidDate: string;
     UserID: number;
     BidAmount: number;
-    commissionReceived: number;
-    remaining: number;
+}
+
+interface ChitInfo{
+    name: string;
+    totalAmount:number;
+    maxParticipants:number,
+    duration:number,
+    startDate:Date,
+    EndDate:Date,
+    CreatorID:number,
+    Participants:[number],
+    chitType:string
+    
 }
 
 const CreatorBidPage = () => {
@@ -18,13 +29,14 @@ const CreatorBidPage = () => {
     const [userNames, setUserNames] = useState<{ [key: number]: string }>({});
     const [totalCommission, setTotalCommission] = useState(0);
     const [maxChitAllowed, setMaxChitAllowed] = useState(0);
-
     const [showModal, setShowModal] = useState(false);
     const [bidDate, setBidDate] = useState('');
     const [email, setEmail] = useState('');
     const [bidAmount, setBidAmount] = useState(0);
-
+    const [emails, setEmails] = useState<string[]>(['anil.singh@example.com']);
     const location = useLocation();
+    const [chitInfo, setChitInfo] = useState<ChitInfo | null>(null);
+    const [minBidDate, setMinBidDate] = useState('');
 
     const fetchUserName = async (userID: number) => {
         if (userNames[userID]) return;
@@ -45,6 +57,56 @@ const CreatorBidPage = () => {
         }
     };
 
+  
+        const fetchEmails = async () => {
+            try {
+                const id = location.state?.id
+                // Fetch all participant emails
+                const allEmailsResponse = await axios.get(`http://localhost:5001/chitFund/participants/email/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const allEmails = allEmailsResponse.data.emails;
+                console.log(allEmails);
+
+               // Fetch winner emails
+                const winnerEmailsResponse = await axios.get(`http://localhost:5002/bid/winners/email/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const winnerEmails = winnerEmailsResponse.data.emails;
+                console.log(winnerEmails)
+
+
+                // Filter out winner emails from allEmails
+                const availableEmails = allEmails.filter((email:unknown) => !winnerEmails.includes(email));
+                console.log(availableEmails);
+
+               // Set the filtered emails in state
+                setEmails(availableEmails);
+            } catch (error) {
+                console.error("Error fetching emails:", error);
+            }
+        };
+
+    const fetchChitFundInfo = async (id: number) => {
+        try {
+            const res = await axios.get(`http://localhost:5001/getChitFundById/${id}`);
+            setChitInfo(res.data)
+            
+            setAmount(res.data.totalAmount);
+            setMaxChitAllowed(res.data.maxParticipants);
+            setMinBidDate(res.data.startDate);
+            console.log(res.data);
+        } catch (error) {
+            console.error("Error fetching chit fund info:", error);
+        }
+    };
+
     useEffect(() => {
         const id = location.state?.id;
         if (id) {
@@ -53,17 +115,23 @@ const CreatorBidPage = () => {
                     const bidsData = response.data;
                     setBids(bidsData);
                     bidsData.forEach((bid: BidData) => fetchUserName(bid.UserID));
+                    if (bidsData.length > 0) {
+                        const lastBidDate = new Date(bidsData[bidsData.length - 1].BidDate);
+                        const nextMonth = new Date(lastBidDate.getFullYear(), lastBidDate.getMonth() + 1, 1);
+                        setMinBidDate(nextMonth.toISOString().split("T")[0]);
+                    }
                 })
                 .catch(error => {
                     console.error("Error fetching bids:", error);
                 });
+                fetchChitFundInfo(id);
         }
+        fetchEmails();
     }, [location.state]);
 
     useEffect(() => {
-        const total = bids.reduce((acc, each) => {
-            return acc + (0.025 * each.BidAmount);
-        }, 0);
+        fetchEmails()
+        const total = bids.reduce((acc, each) => acc + (0.05 * each.BidAmount), 0);
         setTotalCommission(total);
         const amount = location.state?.totalAmount;
         const maxChitAllowed = location.state?.max;
@@ -72,13 +140,38 @@ const CreatorBidPage = () => {
         if (maxChitAllowed) setMaxChitAllowed(maxChitAllowed);
     }, [bids]);
 
-    const handleAddBid = () => {
-        // Logic to submit the bid
-        const newBid = { BidDate: bidDate, email, BidAmount: bidAmount };
-        console.log("Submitting new bid:", newBid);
-        // Here you could add your API call to submit the bid
+    const handleAddBid = async () => {
+        if (bidAmount >= amount * 0.05) {
+            alert(`Bid amount should be less than 5% of ${amount}`);
+            return;
+        }
 
-        // Reset fields and close modal
+        const newBid = { BidDate: bidDate, email, BidAmount: bidAmount };
+        const user = await axios.get(`http://localhost:5000/user/email/${newBid.email}`, {
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const id = location.state?.id;
+        const response = await axios.post('http://localhost:5002/createBid', {
+            ChitFundID: id,
+            UserID: user.data.userId,
+            BidAmount: newBid.BidAmount,
+            BidDate: newBid.BidDate
+        });
+
+        const createdBid = {
+            id: response.data.id,
+            BidDate: newBid.BidDate,
+            UserID: response.data.UserID,
+            BidAmount: response.data.BidAmount
+        };
+
+        setBids((prevBids) => [...prevBids, createdBid]);
+        if (!userNames[response.data.UserID]) fetchUserName(response.data.UserID);
+
         setBidDate('');
         setEmail('');
         setBidAmount(0);
@@ -91,42 +184,33 @@ const CreatorBidPage = () => {
             <table className="table">
                 <thead>
                     <tr>
-                        <th scope="col">No.</th>
-                        <th scope="col">Date</th>
-                        <th scope="col">Bid Winner</th>
-                        <th scope="col">Bid Amount</th>
-                        <th scope="col">Commission Received</th>
-                        <th scope="col">Remaining</th>
+                        <th>No.</th>
+                        <th>Date</th>
+                        <th>Bid Winner</th>
+                        <th>Bid Amount</th>
+                        <th>Commission Received</th>
+                        <th>Remaining</th>
                     </tr>
                 </thead>
-                <tbody className="table-group-divider">
+                <tbody>
                     {bids.map((bid, index) => (
                         <tr key={bid.id}>
-                            <th scope="row">{index + 1}</th>
+                            <td>{index + 1}</td>
                             <td>{bid.BidDate}</td>
                             <td>{userNames[bid.UserID] || 'Loading...'}</td>
                             <td>{bid.BidAmount}</td>
-                            <td>{(bid.BidAmount * 0.025).toFixed(2)}</td>
-                            <td>{(amount - bid.BidAmount - (bid.BidAmount * 0.025)).toFixed(2)}</td>
+                            <td>{(bid.BidAmount * 0.05).toFixed(2)}</td>
+                            <td>{(amount - bid.BidAmount - (bid.BidAmount * 0.05)).toFixed(2)}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-
+           
             <div className="container">
-                <div className="row">
-                    <div className="col text-right">
-                        <button 
-                            className="btn btn-primary position-fixed" 
-                            style={{ right: '20px' }} 
-                            onClick={() => setShowModal(true)}
-                        >
-                            Add Bid
-                        </button>
-                    </div>
-                </div>
+            <button  className="btn btn-primary position-fixed" 
+                            style={{ right: '20px' }}  onClick={() => setShowModal(true)}>Add Bid</button>
 
-                <div className="row row-cols-1 row-cols-md-2 g-4 mt-5">
+            <div className="row row-cols-1 row-cols-md-2 g-4 mt-5">
                     <div className="col">
                         <div className="card">
                             <div className="card-body">
@@ -144,30 +228,35 @@ const CreatorBidPage = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+                </div>
 
-            {/* Modal for adding a bid */}
             {showModal && (
-                <div className="modal fade show" style={{ display: 'block' }} aria-labelledby="exampleModalLabel" aria-hidden="false">
+                <div className="modal fade show" style={{ display: 'block' }} aria-hidden="false">
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Add Bid</h5>
+                                <h5 className="modal-title">Add Bid</h5>
                                 <button type="button" className="btn-close" onClick={() => setShowModal(false)} aria-label="Close"></button>
                             </div>
                             <div className="modal-body">
                                 <form>
-                                    <div className="form-outline mb-4">
-                                        <input type="date" className="form-control" value={bidDate} onChange={(e) => setBidDate(e.target.value)} />
-                                        <label className="form-label">Date</label>
+                                    <div className="mb-4">
+                                        <input type="date" className="form-control" value={bidDate}  min={minBidDate}
+                                             onChange={(e) => setBidDate(e.target.value)} />
+                                        <label>Date</label>
                                     </div>
-                                    <div className="form-outline mb-4">
-                                        <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} />
-                                        <label className="form-label">Email address</label>
+                                    <div className="mb-4">
+                                        <select className="form-control" value={email} onChange={(e) => setEmail(e.target.value)}>
+                                            <option value="">Select Email</option>
+                                            {emails.map((email) => (
+                                                <option key={email} value={email}>{email}</option>
+                                            ))}
+                                        </select>
+                                        <label>Email address</label>
                                     </div>
-                                    <div className="form-outline mb-4">
+                                    <div className="mb-4">
                                         <input type="number" className="form-control" value={bidAmount} onChange={(e) => setBidAmount(Number(e.target.value))} />
-                                        <label className="form-label">Bid Amount</label>
+                                        <label>Bid Amount (less than {amount -(amount * 0.05)} and greater than {(amount * 0.5) })</label>
                                     </div>
                                     <button type="button" className="btn btn-primary" onClick={handleAddBid}>Submit</button>
                                 </form>
