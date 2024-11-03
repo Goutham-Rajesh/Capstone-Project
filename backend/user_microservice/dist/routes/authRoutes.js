@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const authController_1 = require("../controllers/authController");
 const auth_1 = require("../middleware/auth");
 const User_1 = __importDefault(require("../models/User"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const router = express_1.default.Router();
 router.post('/register', authController_1.register);
 router.post('/login', authController_1.login);
@@ -29,7 +30,7 @@ router.get('/user/:id', auth_1.authenticateToken, (req, res) => __awaiter(void 0
 }));
 router.patch('/userProfile/:id', authController_1.updateUserProfile); // New route for updating user profile
 // Assuming authenticateToken is a middleware for authentication
-router.get('/user/email/:email', auth_1.authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/user/email/:email', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield User_1.default.findOne({
             where: {
@@ -46,5 +47,24 @@ router.get('/user/email/:email', auth_1.authenticateToken, (req, res) => __await
         console.error("Error retrieving user by email:", error);
         res.status(500).json({ message: "Internal server error" });
     }
+}));
+router.post('/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.body;
+    try {
+        user.forEach((user) => __awaiter(void 0, void 0, void 0, function* () {
+            user.password = yield bcryptjs_1.default.hash(user.password, 10);
+            yield User_1.default.create(user);
+        }));
+        console.log('added user');
+    }
+    catch (error) {
+        console.error('Error adding user:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+    res.json({ message: 'Users added successfully' });
+}));
+router.get('/user/getemail/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const users = yield User_1.default.findByPk(req.params.id);
+    res.json({ email: users === null || users === void 0 ? void 0 : users.email });
 }));
 exports.default = router;

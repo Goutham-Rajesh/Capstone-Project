@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/UserChitFund.css'; // Ensure this file contains the CSS for hover effects
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface ChitFund {
   _id: string;
@@ -29,6 +30,8 @@ interface User {
 const ChitFundComponent = () => {
   const [availableChitFunds, setAvailableChitFunds] = useState<ChitFund[]>([]);
   const [joinedChitFunds, setJoinedChitFunds] = useState<ChitFund[]>([]);
+
+  const navigate=useNavigate();
   const [user, setUser] = useState<User | null>(null);
 
 
@@ -123,6 +126,11 @@ const ChitFundComponent = () => {
     }
   };
 
+  function handleInfo(chit: ChitFund): void {
+    navigate('/UserBidPage', { state: { id: chit._id, totalAmount:chit.totalAmount, max:chit.maxParticipants } });
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <div className="container mt-5">
       <h1 className="mb-4">Welcome {user?.name}</h1>
@@ -163,6 +171,7 @@ const ChitFundComponent = () => {
                     End Date: {new Date(chit.endDate).toLocaleDateString()}<br />
                   </p>
                   <button className="btn btn-danger" onClick={() => handleLeave(chit)}>Leave</button>
+                  <button className="btn btn-danger" onClick={()=>handleInfo(chit)}>Bid Info</button>
                 </div>
               </div>
             </div>
