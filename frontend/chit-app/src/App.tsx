@@ -11,6 +11,7 @@ import CreateChit from './pages/CreateChitPage';
 import AboutUs from './pages/About';
 import CreatorBidPage from './pages/CreatorBidPage';
 import UserBidPage from './pages/UserBidPage';
+import Logout from './pages/Logout';
 //import BidCreation from './pages/BidCreation';
 
 const App: React.FC = () => {
@@ -71,6 +72,8 @@ const App: React.FC = () => {
                 <Route path="/CreatorBidPage" element={<CreatorBidPage/>} />
                 <Route path="/UserBidPage" element={<UserBidPage />} />
                 <Route path="/About" element={renderAbout()}/>
+                <Route path="/logout" element={<Logout />} />
+
             </Routes>
         </Router>
     );

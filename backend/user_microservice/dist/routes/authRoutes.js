@@ -29,7 +29,7 @@ router.get('/user/:id', auth_1.authenticateToken, (req, res) => __awaiter(void 0
     res.json(users);
 }));
 // Assuming authenticateToken is a middleware for authentication
-router.get('/user/email/:email', auth_1.authenticateToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/user/email/:email', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = yield User_1.default.findOne({
             where: {

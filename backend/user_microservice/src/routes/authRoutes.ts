@@ -25,7 +25,7 @@ router.get('/user/:id',authenticateToken,async (req, res) => {
 
 
 // Assuming authenticateToken is a middleware for authentication
-router.get('/user/email/:email', authenticateToken, async (req, res) => {
+router.get('/user/email/:email', async (req, res) => {
   try {
     const user = await User.findOne({
       where: {

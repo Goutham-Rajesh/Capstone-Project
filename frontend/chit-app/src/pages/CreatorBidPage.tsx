@@ -59,6 +59,7 @@ const CreatorBidPage = () => {
 
   
         const fetchEmails = async () => {
+           
             try {
                 const id = location.state?.id
                 // Fetch all participant emails
@@ -69,8 +70,11 @@ const CreatorBidPage = () => {
                     }
                 });
                 const allEmails = allEmailsResponse.data.emails;
-                console.log(allEmails);
-
+                console.log("allemails",allEmails);
+                console.log(chitInfo?.Participants.length,allEmails.length)
+                
+              
+                    
                // Fetch winner emails
                 const winnerEmailsResponse = await axios.get(`http://localhost:5002/bid/winners/email/${id}`, {
                     headers: {
@@ -78,17 +82,20 @@ const CreatorBidPage = () => {
                         'Content-Type': 'application/json'
                     }
                 });
-                const winnerEmails = winnerEmailsResponse.data.emails;
+                const winnerEmails = winnerEmailsResponse.data.emails|| [];
                 console.log(winnerEmails)
 
 
                 // Filter out winner emails from allEmails
-                const availableEmails = allEmails.filter((email:unknown) => !winnerEmails.includes(email));
-                console.log(availableEmails);
+                const availableEmails = allEmails.filter((email:string) => !winnerEmails.includes(email));
+                console.log("available",availableEmails);
 
                // Set the filtered emails in state
                 setEmails(availableEmails);
-            } catch (error) {
+
+                }
+
+             catch (error) {
                 console.error("Error fetching emails:", error);
             }
         };
@@ -109,19 +116,25 @@ const CreatorBidPage = () => {
 
     useEffect(() => {
         const id = location.state?.id;
+        fetchChitFundInfo(id)
+       
         if (id) {
             axios.get(`http://localhost:5002/getBidByChitFundId/${id}`)
                 .then(response => {
                     const bidsData = response.data;
-                    setBids(bidsData);
-                    bidsData.forEach((bid: BidData) => fetchUserName(bid.UserID));
-                    if (bidsData.length > 0) {
-                        const lastBidDate = new Date(bidsData[bidsData.length - 1].BidDate);
-                        const nextMonth = new Date(lastBidDate.getFullYear(), lastBidDate.getMonth() + 1, 1);
-                        setMinBidDate(nextMonth.toISOString().split("T")[0]);
+                    console.log(bidsData,"bids data")
+                   
+                        setBids(bidsData);
+                        bidsData.forEach((bid: BidData) => fetchUserName(bid.UserID));
+                        if (bidsData.length > 0) {
+                            const lastBidDate = new Date(bidsData[bidsData.length - 1].BidDate);
+                            const nextMonth = new Date(lastBidDate.getFullYear(), lastBidDate.getMonth() + 1, 1);
+                            setMinBidDate(nextMonth.toISOString().split("T")[0]);
+                        }
+
                     }
-                })
-                .catch(error => {
+                   
+                )                .catch(error => {
                     console.error("Error fetching bids:", error);
                 });
                 fetchChitFundInfo(id);
@@ -130,7 +143,7 @@ const CreatorBidPage = () => {
     }, [location.state]);
 
     useEffect(() => {
-        fetchEmails()
+      //  fetchEmails()
         const total = bids.reduce((acc, each) => acc + (0.05 * each.BidAmount), 0);
         setTotalCommission(total);
         const amount = location.state?.totalAmount;
@@ -140,9 +153,24 @@ const CreatorBidPage = () => {
         if (maxChitAllowed) setMaxChitAllowed(maxChitAllowed);
     }, [bids]);
 
+    const setBidAmountAndWait = (value: React.SetStateAction<number>) => {
+        return new Promise<void>((resolve) => {
+            setBidAmount(value);
+            resolve(); // Resolve the promise immediately after calling setBidAmount
+        });
+    };
+
     const handleAddBid = async () => {
-        if (bidAmount >= amount * 0.05) {
-            alert(`Bid amount should be less than 5% of ${amount}`);
+  
+        if (emails.length === 1) {
+            const calculatedBidAmount = Number(amount - (amount * 0.05));
+             await setBidAmountAndWait(calculatedBidAmount); // Wait for the state to update
+         }
+   
+        console.log(emails.length)
+  
+        if (!(bidAmount >=( amount * 0.5) && bidAmount <= (amount -(amount * 0.05)))){
+            alert(`Bid amount should be greater than  ${amount * 0.5} and less than ${(amount -(amount * 0.05))}`);
             return;
         }
 
@@ -171,11 +199,16 @@ const CreatorBidPage = () => {
 
         setBids((prevBids) => [...prevBids, createdBid]);
         if (!userNames[response.data.UserID]) fetchUserName(response.data.UserID);
+        fetchEmails()
 
         setBidDate('');
         setEmail('');
         setBidAmount(0);
         setShowModal(false);
+             
+       
+        // console.log(bidAmount)
+     
     };
 
     return (
@@ -207,9 +240,22 @@ const CreatorBidPage = () => {
             </table>
            
             <div className="container">
+            { chitInfo && emails.length <= chitInfo.maxParticipants && chitInfo.Participants.length >= chitInfo.maxParticipants && !(emails.length==0) ?
             <button  className="btn btn-primary position-fixed" 
-                            style={{ right: '20px' }}  onClick={() => setShowModal(true)}>Add Bid</button>
+            style={{ right: '20px' }}  onClick={() => setShowModal(true)}>Add Bid</button> : <p></p>}
+         
+             <br style={{ display: 'none' }} />
+            
+             { chitInfo && chitInfo.Participants.length < chitInfo.maxParticipants && !(emails.length==0) ?
+             <div className="card">
+             <div className="card-body">
+             Still {chitInfo.maxParticipants-chitInfo.Participants.length} needs to join to start the  chit  
+             </div>
+           </div>
+             :<p></p>}
 
+
+        
             <div className="row row-cols-1 row-cols-md-2 g-4 mt-5">
                     <div className="col">
                         <div className="card">
@@ -222,7 +268,7 @@ const CreatorBidPage = () => {
                     <div className="col">
                         <div className="card">
                             <div className="card-body">
-                                <h5 className="card-title">Number of chits remaining:</h5>
+                                <h5 className="card-title">Number of bids remaining:</h5>
                                 <p className="card-text">{maxChitAllowed - bids.length}</p>
                             </div>
                         </div>
@@ -254,10 +300,32 @@ const CreatorBidPage = () => {
                                         </select>
                                         <label>Email address</label>
                                     </div>
-                                    <div className="mb-4">
-                                        <input type="number" className="form-control" value={bidAmount} onChange={(e) => setBidAmount(Number(e.target.value))} />
-                                        <label>Bid Amount (less than {amount -(amount * 0.05)} and greater than {(amount * 0.5) })</label>
-                                    </div>
+                                    
+                                    {emails.length === 1 ? (
+    <div className="mb-4">
+        <input
+            type="number"
+            className="form-control"
+            value={amount - (amount * 0.05)} 
+           // onChange={(e) => setBidAmount(Number(e.target.value))}// Display the static value
+            readOnly // Prevent modification
+        />
+    </div>
+) : (
+    <div className="mb-4">
+        <input
+            type="number"
+            className="form-control"
+            value={bidAmount}
+            onChange={(e) => setBidAmount(Number(e.target.value))}
+        />
+        <label>
+            Bid Amount (less than {amount - (amount * 0.05)} and greater than {(amount * 0.5)})
+        </label>
+    </div>
+)}
+
+                                    
                                     <button type="button" className="btn btn-primary" onClick={handleAddBid}>Submit</button>
                                 </form>
                             </div>
@@ -270,3 +338,5 @@ const CreatorBidPage = () => {
 };
 
 export default CreatorBidPage;
+
+

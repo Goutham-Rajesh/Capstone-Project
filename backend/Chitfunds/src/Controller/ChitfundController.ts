@@ -104,7 +104,7 @@ const getParticipantEmails = async (req:Request, res:Response)=> {
       let participants:number[]=[]
       if(!chitFund)
       {
-        res.status(404).json({message:"chit fund not found"});
+        res.status(404).json({});
 
       }
       else{

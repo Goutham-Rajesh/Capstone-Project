@@ -70,8 +70,16 @@ const getBidByChitFundId = async (req: Request, res:Response)=>{
       const bids = await Bid.find({ ChitFundID: chitFundId });
   
       // If no bids found, return a 404 response
+      
       if (!bids || bids.length === 0) {
-        res.status(404).json({ message: 'No bids found for this ChitFundID' });
+        const bids=new Bid({
+   
+          ChitFundID: null,
+          UserID: null,
+          BidAmount: null,
+          BidDate:null,
+        })
+        res.status(200).json([]);
         return ;
       }
   
@@ -95,7 +103,15 @@ const getEmailsOfChitWinners = async (req: Request, res: Response) => {
 
       // If no bids found, return a 404 response
       if (!bids || bids.length === 0) {
-          res.status(404).json({ message: 'No bids found for this ChitFundID' });
+        const bids=new Bid({
+   
+          ChitFundID: null,
+          UserID: null,
+          BidAmount: null,
+          BidDate:null,
+        })
+        res.status(200).json([bids]);
+        return ;
       }
 
       // Extract UserIDs from the bids
