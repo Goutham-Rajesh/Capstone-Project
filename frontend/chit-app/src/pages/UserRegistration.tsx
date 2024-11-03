@@ -29,29 +29,48 @@ function UserRegistration() {
         e.preventDefault();
         setErrorMessage('');
         setSuccessMessage('');
-
+    
         // Basic validation
         if (Object.values(formData).some(field => !field)) {
             setErrorMessage('All fields are required!');
             return;
         }
-
+    
+        // Phone number validation (exactly 10 digits)
+        const phoneRegex = /^\d{10}$/;
+        if (!phoneRegex.test(formData.phone)) {
+            setErrorMessage('Phone number must be exactly 10 digits.');
+            return;
+        }
+    
+        // Email validation (simple regex)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            setErrorMessage('Please enter a valid email address.');
+            return;
+        }
+    
+        // Password confirmation validation
+        if (formData.password !== formData.confirmPassword) {
+            setErrorMessage('Passwords do not match.');
+            return;
+        }
+    
         try {
             const response: AxiosResponse<{ message: string }> = await axios.post('http://localhost:5000/register', formData);
             console.log(response.data);
             setSuccessMessage('Registration Successful!');
-            setFormData({ name: '', email: '', phone: '', address: '', password: '',confirmPassword:'' ,role: '' ,termsAccepted: true});
+            setFormData({ name: '', email: '', phone: '', address: '', password: '', confirmPassword: '', role: '', termsAccepted: false });
         } catch (error) {
             console.error('Error during registration:', error);
             setErrorMessage('Unable to add the user. Please try again.');
         }
+        
         setTimeout(() => {
             navigate('/'); // Change to your desired path
         }, 2000); // Change to 3000 for 3 seconds
-
-
     };
-
+    
 
     return (
         <section className="vh-100" style={{ backgroundColor: '#eee' }}>
