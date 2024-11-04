@@ -31,7 +31,7 @@ const ChitFundComponent = () => {
   const [availableChitFunds, setAvailableChitFunds] = useState<ChitFund[]>([]);
   const [joinedChitFunds, setJoinedChitFunds] = useState<ChitFund[]>([]);
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
 
 
@@ -76,22 +76,22 @@ const ChitFundComponent = () => {
   function handleClick(chit: ChitFund): void {
     // Use optional chaining and default to an empty array
     const currentParticipants = chit.participants || [];
-    
+
     if (currentParticipants.length >= chit.maxParticipants) {
       alert("Maximum participants reached for this chit fund.");
       return;
     }
-  
+
     const updateParticipants = async () => {
       try {
         const response = await axios.post(`http://127.0.0.1:5001/updateChitFundById/${chit._id}`, {
           participantId: sessionStorage.getItem("userId"),
         });
         console.log(response.data);
-  
+
         // Remove the chit from availableChitFunds
         setAvailableChitFunds((prev) => prev.filter((c) => c._id !== chit._id));
-  
+
         // Fetch the updated list of joined chit funds
         const joinedChit = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFundByParticipantId/${sessionStorage.getItem("userId")}`);
         setJoinedChitFunds(joinedChit.data);
@@ -99,10 +99,10 @@ const ChitFundComponent = () => {
         console.error("Error updating participants:", error);
       }
     };
-  
+
     updateParticipants();
   }
-  
+
 
   const handleLeave = async (chit: ChitFund) => {
     try {
@@ -127,13 +127,13 @@ const ChitFundComponent = () => {
   };
 
   function handleInfo(chit: ChitFund): void {
-    navigate('/UserBidPage', { state: { id: chit._id} });
+    navigate('/UserBidPage', { state: { id: chit._id } });
     throw new Error('Function not implemented.');
   }
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">Welcome {user?.name}</h1>
+      <h1 className="welcome-heading">Welcome {user?.name}</h1>
       <h2>Available Chit Funds</h2>
       <div className="row">
         {availableChitFunds.map(chit => (
@@ -146,7 +146,6 @@ const ChitFundComponent = () => {
                   Duration: {chit.duration}<br />
                   Participants: {chit.maxParticipants}<br />
                   Start Date: {new Date(chit.startDate).toLocaleDateString()}<br />
-                  End Date: {new Date(chit.endDate).toLocaleDateString()}<br />
                 </p>
                 <button className="btn btn-primary" onClick={() => handleClick(chit)}>Join</button>
               </div>
@@ -168,10 +167,10 @@ const ChitFundComponent = () => {
                     Duration: {chit.duration}<br />
                     Participants: {chit.maxParticipants}<br />
                     Start Date: {new Date(chit.startDate).toLocaleDateString()}<br />
-                    End Date: {new Date(chit.endDate).toLocaleDateString()}<br />
                   </p>
-                  <button className="btn btn-danger" onClick={() => handleLeave(chit)}>Leave</button>
-                  <button className="btn btn-danger" onClick={()=>handleInfo(chit)}>Bid Info</button>
+                  <button className="btn btn-danger me-2" onClick={() => handleLeave(chit)}>Leave</button>
+                  <button className="btn btn-danger" onClick={() => handleInfo(chit)}>Bid Info</button>
+
                 </div>
               </div>
             </div>
@@ -182,6 +181,6 @@ const ChitFundComponent = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ChitFundComponent;
