@@ -33,7 +33,7 @@ const CreatorBidPage = () => {
     const [bidDate, setBidDate] = useState('');
     const [email, setEmail] = useState('');
     const [bidAmount, setBidAmount] = useState(0);
-    const [emails, setEmails] = useState<string[]>(['anil.singh@example.com']);
+    const [emails, setEmails] = useState<string[]>([]);
     const location = useLocation();
     const [chitInfo, setChitInfo] = useState<ChitInfo | null>(null);
     const [minBidDate, setMinBidDate] = useState('');

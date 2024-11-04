@@ -127,7 +127,7 @@ const ChitFundComponent = () => {
   };
 
   function handleInfo(chit: ChitFund): void {
-    navigate('/UserBidPage', { state: { id: chit._id, totalAmount:chit.totalAmount, max:chit.maxParticipants } });
+    navigate('/UserBidPage', { state: { id: chit._id} });
     throw new Error('Function not implemented.');
   }
 

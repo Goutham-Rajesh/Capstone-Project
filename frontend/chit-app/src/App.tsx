@@ -13,6 +13,7 @@ import CreatorBidPage from './pages/CreatorBidPage';
 import UserBidPage from './pages/UserBidPage';
 import Logout from './pages/Logout';
 import UserProfile from './pages/UserProfilePage';
+import MembersInfo from './pages/MemberInfo';
 
 const App: React.FC = () => {
     const [role, setRole] = React.useState('');
@@ -71,6 +72,8 @@ const App: React.FC = () => {
                 <Route path="/ChitFund" element={<UserLoggedIn />} />
                 <Route path="/CreatorBidPage" element={<CreatorBidPage/>} />
                 <Route path="/UserBidPage" element={<UserBidPage />} />
+                <Route path="/UserProfile" element={< UserProfile />} />
+                <Route path="/MembersInfo" element={< MembersInfo/>} />
                 <Route path="/About" element={renderAbout()}/>
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/userProfile" element={<UserProfile />} />
