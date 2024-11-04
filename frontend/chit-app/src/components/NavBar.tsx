@@ -93,6 +93,9 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
       case 'Bid Info':
         navigate('/UserBidPage');
         break;
+      case 'Member Info':
+        navigate('/MembersInfo');
+        break;
       default:
         break;
     }
