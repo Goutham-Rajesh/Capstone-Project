@@ -6,7 +6,6 @@ const ChitfundsSchema = new mongoose.Schema({
     maxParticipants:Number,
     duration:Number,
     startDate:Date,
-    EndDate:Date,
     CreatorID:Number,
     Participants:[Number]
 

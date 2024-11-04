@@ -31,15 +31,7 @@ const ChitFundForm: React.FC = () => {
             [name]: name === 'totalAmount' || name === 'maxParticipants' ? Number(value) : value,
         });
     };
-    function calculateEndDate(startDate: Date, duration: number): string {
-        
-        const endDate = new Date(startDate); // Create a new Date object to avoid mutating the original
-        endDate.setMonth(endDate.getMonth() + duration); 
-        console.log(startDate)
-        console.log(endDate)// Add the duration in months
-    
-        return endDate.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
-    }
+ 
     
 
     const token = sessionStorage.getItem('token');
@@ -53,7 +45,6 @@ const ChitFundForm: React.FC = () => {
     maxParticipants:formData.duration,
     duration:formData.duration,
     startDate:formData.startDate,
-    EndDate:calculateEndDate(formData.startDate, formData.duration),
     CreatorID:sessionStorage.getItem("userId"),
     Participants:formData.participants
 
