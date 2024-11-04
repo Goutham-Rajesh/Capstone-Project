@@ -11,7 +11,9 @@ import CreateChit from './pages/CreateChitPage';
 import AboutUs from './pages/About';
 import CreatorBidPage from './pages/CreatorBidPage';
 import UserBidPage from './pages/UserBidPage';
-//import BidCreation from './pages/BidCreation';
+import Logout from './pages/Logout';
+import UserProfile from './pages/UserProfilePage';
+import MembersInfo from './pages/MemberInfo';
 
 const App: React.FC = () => {
     const [role, setRole] = React.useState('');
@@ -40,9 +42,9 @@ const App: React.FC = () => {
     }, []);
 
     const renderHome = () => {
-        if (role === '') {
+        if (sessionStorage.getItem('role') === null) {
             return <Home pages={["Home", "Login", "Register", "About"]} />;
-        } else if (role === 'Chit Creator') {
+        } else if (sessionStorage.getItem('role') === 'Chit Creator') {
             return <Home pages={["Home", "Create Chit", "Active Chit", "About"]} />;
         } else {
             return <Home pages={["Home", "Chit Group", "About"]} />;
@@ -70,7 +72,11 @@ const App: React.FC = () => {
                 <Route path="/ChitFund" element={<UserLoggedIn />} />
                 <Route path="/CreatorBidPage" element={<CreatorBidPage/>} />
                 <Route path="/UserBidPage" element={<UserBidPage />} />
+                <Route path="/UserProfile" element={< UserProfile />} />
+                <Route path="/MembersInfo" element={< MembersInfo/>} />
                 <Route path="/About" element={renderAbout()}/>
+                <Route path="/logout" element={< Logout/>} />
+                
             </Routes>
         </Router>
     );

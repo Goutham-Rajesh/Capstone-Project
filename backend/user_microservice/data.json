@@ -1,0 +1,163 @@
+[
+    {
+      "name": "Rajesh Kumar",
+      "email": "rajesh.kumar@example.com",
+      "phone": "919876543210",
+      "address": "123, MG Road, Bangalore, India",
+      "password": "password123",
+      "role": "Chit Creator"
+    },
+    {
+      "name": "Sneha Kapoor",
+      "email": "sneha.kapoor@example.com",
+      "phone": "919876543211",
+      "address": "456, LB Nagar, Hyderabad, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Anil Singh",
+      "email": "anil.singh@example.com",
+      "phone": "919876543212",
+      "address": "789, Park Street, Kolkata, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Pooja Sharma",
+      "email": "pooja.sharma@example.com",
+      "phone": "919876543213",
+      "address": "10, Main Road, Mumbai, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Ramesh Patil",
+      "email": "ramesh.patil@example.com",
+      "phone": "919876543214",
+      "address": "15, Gandhi Nagar, Pune, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Mohan Das",
+      "email": "mohan.das@example.com",
+      "phone": "919876543215",
+      "address": "25, Anna Salai, Chennai, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Geeta Verma",
+      "email": "geeta.verma@example.com",
+      "phone": "919876543216",
+      "address": "35, Sector 5, Noida, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Kavita Mehta",
+      "email": "kavita.mehta@example.com",
+      "phone": "919876543217",
+      "address": "45, Brigade Road, Bangalore, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Ajay Gupta",
+      "email": "ajay.gupta@example.com",
+      "phone": "919876543218",
+      "address": "55, Connaught Place, Delhi, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Anjali Reddy",
+      "email": "anjali.reddy@example.com",
+      "phone": "919876543219",
+      "address": "65, Banjara Hills, Hyderabad, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Sunil Shetty",
+      "email": "sunil.shetty@example.com",
+      "phone": "919876543220",
+      "address": "75, Juhu Beach, Mumbai, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Neha Pandey",
+      "email": "neha.pandey@example.com",
+      "phone": "919876543221",
+      "address": "85, Indiranagar, Bangalore, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Rahul Sharma",
+      "email": "rahul.sharma@example.com",
+      "phone": "919876543222",
+      "address": "95, Salt Lake, Kolkata, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Priya Iyer",
+      "email": "priya.iyer@example.com",
+      "phone": "919876543223",
+      "address": "105, T Nagar, Chennai, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Amit Bhatt",
+      "email": "amit.bhatt@example.com",
+      "phone": "919876543224",
+      "address": "115, Koramangala, Bangalore, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Shruti Desai",
+      "email": "shruti.desai@example.com",
+      "phone": "919876543225",
+      "address": "125, Bandra West, Mumbai, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Manoj Kumar",
+      "email": "manoj.kumar@example.com",
+      "phone": "919876543226",
+      "address": "135, Sarojini Nagar, Delhi, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Nidhi Agarwal",
+      "email": "nidhi.agarwal@example.com",
+      "phone": "919876543227",
+      "address": "145, Viman Nagar, Pune, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Vikram Singh",
+      "email": "vikram.singh@example.com",
+      "phone": "919876543228",
+      "address": "155, BTM Layout, Bangalore, India",
+      "password": "password123",
+      "role": "Participant"
+    },
+    {
+      "name": "Swati Patel",
+      "email": "swati.patel@example.com",
+      "phone": "919876543229",
+      "address": "165, Alkapuri, Vadodara, India",
+      "password": "password123",
+      "role": "Participant"
+    }
+  ]
+  

@@ -39,3 +39,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   const token = jwt.sign({ user: user, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: '2h' });
   res.json({ 'token':token,'userId':user.userId,'role':user.role });
 };
+
+export const updateUserProfile = async (req: Request, res: Response): Promise<void> => {
+  const userId = req.params.id;
+  const { profilePic } = req.body; // Get the profile picture URL from request body
+
+  try {
+    await User.update({ profilePic }, { where: { userId } });
+    res.status(200).json({ message: 'User profile updated successfully' });
+  } catch (error) {
+    res.status(400).json({ message: 'Error updating user profile', error: (error as Error).message });
+  }
+};

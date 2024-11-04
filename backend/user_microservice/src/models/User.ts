@@ -9,6 +9,7 @@ interface UserAttributes {
   address?: string;
   password: string;
   role: 'Admin' | 'Chit Creator' | 'Participant';
+  profilePic?: string; // New field for profile picture URL
 }
 
 class User extends Model<UserAttributes> implements UserAttributes {
@@ -19,6 +20,7 @@ class User extends Model<UserAttributes> implements UserAttributes {
   public address!: string;
   public password!: string;
   public role!: 'Admin' | 'Chit Creator' | 'Participant';
+  public profilePic?: string; // New field for profile picture URL
 }
 
 User.init(
@@ -52,6 +54,9 @@ User.init(
       type: DataTypes.ENUM('Admin', 'Chit Creator', 'Participant'),
       defaultValue: 'Participant',
     },
+    profilePic: { // New field for profile picture URL
+      type: DataTypes.STRING,
+    },
   },
   {
     sequelize,
@@ -59,36 +64,4 @@ User.init(
   }
 );
 
-
-// const User = sequelize.define('User', {
-//   userId: {
-//     type: DataTypes.INTEGER,
-//     autoIncrement: true,
-//     primaryKey: true,
-//   },
-//   name: {
-//     type: DataTypes.STRING,
-//     allowNull: false,
-//   },
-//   email: {
-//     type: DataTypes.STRING,
-//     unique: true,
-//     allowNull: false,
-//   },
-//   phone: {
-//     type: DataTypes.STRING,
-//     allowNull: false,
-//   },
-//   address: {
-//     type: DataTypes.STRING,
-//   },
-//   password: {
-//     type: DataTypes.STRING,
-//     allowNull: false,
-//   },
-//   role: {
-//     type: DataTypes.ENUM('Admin', 'Chit Creator', 'Participant'),
-//     defaultValue: 'Participant',
-//   },
-// });
 export default User;

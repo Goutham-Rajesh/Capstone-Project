@@ -20,7 +20,7 @@ interface ChitFund {
 
 const CreatorChitFundCard = () => {
   const [availableChitFunds, setAvailableChitFunds] = useState<ChitFund[]>([])
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch available chit funds
@@ -37,7 +37,7 @@ const CreatorChitFundCard = () => {
     fetchChitFunds();
   }, []); // Make sure to add an empty dependency array to run this effect only once
 
-  function handleClick(chit:ChitFund): void {
+  function handleClick(chit: ChitFund): void {
 
     const deleteChitGroup = async () => {
       try {
@@ -52,11 +52,11 @@ const CreatorChitFundCard = () => {
     }
 
     deleteChitGroup();
-    
+
   }
 
   function handleInfo(chit: ChitFund): void {
-    navigate('/CreatorBidPage', { state: { id: chit._id, totalAmount:chit.totalAmount, max:chit.maxParticipants } });
+    navigate('/CreatorBidPage', { state: { id: chit._id} });
     throw new Error('Function not implemented.');
   }
 
@@ -76,14 +76,14 @@ const CreatorChitFundCard = () => {
                   Start Date: {new Date(chit.startDate).toLocaleDateString()}<br />
                   End Date: {new Date(chit.endDate).toLocaleDateString()}<br />
                 </p>
-                <button className="btn btn-danger" onClick={()=>handleClick(chit)}>Delete</button>
-                <button className="btn btn-danger" onClick={()=>handleInfo(chit)}>Bid Info</button>
+                <button className="btn btn-danger me-2" onClick={() => handleClick(chit)}>Delete</button>
+                <button className="btn btn-danger" onClick={() => handleInfo(chit)}>Bid Info</button>
               </div>
             </div>
           </div>
         ))}
       </div>
-      </div>
+    </div>
   );
 };
 

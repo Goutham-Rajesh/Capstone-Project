@@ -4,7 +4,7 @@ import UserChitFund from "../components/UserChitFund";
 function UserLoggedIn(){
     return(
         <div>
-            <NavBar pages={['Home', 'Chit Groups', 'About']}/>
+            <NavBar pages={['Home', 'Chit Group', 'About']} isLoggedIn={true}/>
             <UserChitFund/>
         </div>
     )
