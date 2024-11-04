@@ -1,4 +1,4 @@
-body {
+.body {
     font-family: 'Lato', sans-serif;
 }
 
@@ -8,13 +8,13 @@ body {
     padding: 0 10px;
 }
 
-h2 {
+.h2 {
     font-size: 26px;
     margin: 20px 0;
     text-align: center;
 }
 
-h2 small {
+.h2 small {
     font-size: 0.5em;
 }
 

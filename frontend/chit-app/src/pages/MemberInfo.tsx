@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import ResponsiveAppBar from '../components/NavBar';
 
 // Define the type for a member
 interface Member {
@@ -28,7 +29,14 @@ const MembersInfo: React.FC = () => {
   
   }, []);
 
+  const isCreator = sessionStorage.getItem('role') === 'Chit Creator';
+
+
+
   return (
+    <>
+    <ResponsiveAppBar pages={isCreator ? ['Creator Bid Info', 'Member Info'] : ['Bid Info', 'Member Info']} isLoggedIn={true} />
+    <h1>Members Info</h1>
     <table className="table table-success table-striped">
       <thead>
         <tr className="table-primary">
@@ -49,6 +57,7 @@ const MembersInfo: React.FC = () => {
         ))}
       </tbody>
     </table>
+    </>
   );
 };
 

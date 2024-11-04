@@ -87,6 +87,15 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
       case 'Profile':
         navigate('/UserProfile');
         break;
+      case 'Creator Bid Info':
+        navigate('/CreatorBidPage');
+        break;
+      case 'Bid Info':
+        navigate('/UserBidPage');
+        break;
+      case 'Member Info':
+        navigate('/MembersInfo');
+        break;
       default:
         break;
     }
@@ -108,6 +117,15 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
         navigate('/logout')
         // Handle logout logic here, e.g., clear user session
         break;
+      case 'Chit Bid Info':
+        navigate('/CreatorBidPage');
+        break;
+      case 'Bid Info':
+        navigate('/UserBidPage');
+        break;
+      case 'Member Info':
+        navigate('/MembersInfo');
+        break;
       default:
         break;
     }
@@ -125,7 +143,10 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
         (page === 'Active Chit' && path === '/ChitCreator') ||
         (page === 'Login' && path === '/Login') ||
         (page === 'Register' && path === '/Register')||
-        (page === 'Profile' && path === '/UserProfile')
+        (page === 'Profile' && path === '/UserProfile')||
+        (page === 'Creator Bid Info' && path === '/CreatorBidPage')||
+        (page === 'Bid Info' && path === '/UserBidPage')||
+        (page === 'Member Info' && path === '/MembersInfo')
       );
     });
 
