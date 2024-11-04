@@ -99,7 +99,6 @@ const getEmailsOfChitWinners = async (req: Request, res: Response) => {
 
       // Find bids with the specified ChitFundID
       const bids = await Bid.find({ ChitFundID:chitFundId });
-      console.log(bids)
 
       // If no bids found, return a 404 response
       if (!bids || bids.length === 0) {
