@@ -133,7 +133,7 @@ const ChitFundComponent = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="mb-4">Welcome {user?.name}</h1>
+      <h1 className="welcome-heading">Welcome {user?.name}</h1>
       <h2>Available Chit Funds</h2>
       <div className="row">
         {availableChitFunds.map(chit => (
@@ -146,7 +146,6 @@ const ChitFundComponent = () => {
                   Duration: {chit.duration}<br />
                   Participants: {chit.maxParticipants}<br />
                   Start Date: {new Date(chit.startDate).toLocaleDateString()}<br />
-                  End Date: {new Date(chit.endDate).toLocaleDateString()}<br />
                 </p>
                 <button className="btn btn-primary" onClick={() => handleClick(chit)}>Join</button>
               </div>
@@ -154,7 +153,7 @@ const ChitFundComponent = () => {
           </div>
         ))}
       </div>
-
+  
       <h2 className="mt-5">Joined Chit Funds</h2>
       <div className="row">
         {joinedChitFunds.length > 0 ? (
@@ -168,10 +167,9 @@ const ChitFundComponent = () => {
                     Duration: {chit.duration}<br />
                     Participants: {chit.maxParticipants}<br />
                     Start Date: {new Date(chit.startDate).toLocaleDateString()}<br />
-                    End Date: {new Date(chit.endDate).toLocaleDateString()}<br />
                   </p>
                   <button className="btn btn-danger" onClick={() => handleLeave(chit)}>Leave</button>
-                  <button className="btn btn-danger" onClick={()=>handleInfo(chit)}>Bid Info</button>
+                  <button className="btn btn-danger" onClick={() => handleInfo(chit)}>Bid Info</button>
                 </div>
               </div>
             </div>
@@ -181,7 +179,7 @@ const ChitFundComponent = () => {
         )}
       </div>
     </div>
-  );
-};
+  );  
+}
 
 export default ChitFundComponent;
