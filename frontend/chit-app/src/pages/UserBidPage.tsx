@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Session } from 'inspector/promises';
-
+import ResponsiveAppBar from '../components/NavBar';
 interface BidData {
   id: number;
   BidDate: string;
@@ -116,7 +116,8 @@ const UserBidPage = () => {
 
   return (
     <>
-      <div>UserBidPage</div>
+      <ResponsiveAppBar pages={['Bid Info','Member Info']} isLoggedIn={true} />
+      <div><h2>UserBidPage</h2></div>
       <table className="table">
         <thead>
           <tr>

@@ -5,7 +5,7 @@ import ChitFundForm from '../components/ChitCreation'
 const CreateChit = () =>{
     return (
         <>
-            <Navbar pages={['Home', 'Create Chit', 'Active Chit', 'About']} isLoggedIn={true} />
+            <Navbar pages={['Active Chit', 'Create Chit','Profile','About']} isLoggedIn={true} />
             <h1>Welcome to Create Chit page</h1>
             <ChitFundForm/>
         </>

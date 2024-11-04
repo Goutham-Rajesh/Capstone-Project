@@ -74,7 +74,6 @@ const CreatorChitFundCard = () => {
                   Duration: {chit.duration}<br />
                   Participants: {chit.maxParticipants}<br />
                   Start Date: {new Date(chit.startDate).toLocaleDateString()}<br />
-                  End Date: {new Date(chit.endDate).toLocaleDateString()}<br />
                 </p>
                 <button className="btn btn-danger me-2" onClick={() => handleClick(chit)}>Delete</button>
                 <button className="btn btn-danger" onClick={() => handleInfo(chit)}>Bid Info</button>

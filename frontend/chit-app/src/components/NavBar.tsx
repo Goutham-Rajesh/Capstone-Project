@@ -7,12 +7,12 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 interface ResponsiveAppBarProps {
   pages: string[];
@@ -27,7 +27,7 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const [activePage, setActivePage] = React.useState<string>(pages[0]);
-
+  const [user,setUser]=React.useState<string>('');
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -35,6 +35,25 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
+
+  const getUser = async () => {
+    const token = sessionStorage.getItem('token');
+    const userId = sessionStorage.getItem('userId');
+    if (token && userId) {
+        try {
+            const response = await axios.get(`http://127.0.0.1:5000/user/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            setUser(response.data.profilePic);
+            console.log(response.data.profilePic);
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+        }
+    }
+};
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
@@ -64,6 +83,9 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
         break;
       case 'Register':
         navigate('/Register');
+        break;
+      case 'Profile':
+        navigate('/UserProfile');
         break;
       default:
         break;
@@ -102,7 +124,8 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
         (page === 'Create Chit' && path === '/createChitfund') ||
         (page === 'Active Chit' && path === '/ChitCreator') ||
         (page === 'Login' && path === '/Login') ||
-        (page === 'Register' && path === '/Register')
+        (page === 'Register' && path === '/Register')||
+        (page === 'Profile' && path === '/UserProfile')
       );
     });
 
@@ -111,6 +134,8 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
     } else {
       setActivePage('Home'); // Default to Home if no match is found
     }
+
+    getUser();
   }, [location, pages]);
 
   return (
@@ -207,34 +232,43 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
           </Box>
           {isLoggedIn && (
             <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: '45px' }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={() => setAnchorElUser(null)}
-              >
-                {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
-                    <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                {/* Replace Avatar with an img tag */}
+                <img
+                  src={user} // Update with the correct image path
+                  alt="User Avatar"
+                  style={{
+                    width: '40px', // Adjust size as needed
+                    height: '40px',
+                    borderRadius: '50%', // To make it circular
+                  }}
+                />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={() => setAnchorElUser(null)}
+            >
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={() => handleCloseUserMenu(setting)}>
+                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
           )}
         </Toolbar>
       </Container>

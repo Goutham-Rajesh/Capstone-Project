@@ -4,7 +4,7 @@ import UserProfileComponent from "../components/UserProfileComponent";
 function UserProfile(){
     return(
         <div>
-            <ResponsiveAppBar pages={['Home', 'Chit Group', 'About']} isLoggedIn={true}/>
+            <ResponsiveAppBar pages={['Chit Group','Profile','About']} isLoggedIn={true}/>
             <UserProfileComponent/>
         </div>
     )
