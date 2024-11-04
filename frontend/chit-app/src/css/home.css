@@ -1,0 +1,39 @@
+.hero {
+    position: relative;
+    height: 100vh; /* Full height */
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center content */
+    overflow: hidden; /* Hide overflow */
+  }
+  
+  .hero img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease-in-out; /* Smooth fade-in effect */
+  }
+  
+  .hero img.active {
+    opacity: 1; /* Show active image */
+  }
+  
+  .hero .container {
+    position: relative; /* Allow z-index to work */
+    z-index: 2; /* Ensure text is above images */
+    text-align: center; /* Center text */
+  }
+  
+  .hero h1 {
+    font-size: 4rem; /* Increase hero text size */
+    margin: 0; /* Remove default margin */
+  }
+  
+  .hero p {
+    font-size: 1.5rem; /* Increase subtitle text size */
+  }
+  
