@@ -153,9 +153,16 @@ const UserProfileComponent: React.FC = () => {
                   <img
                     src={user.profilePic}
                     alt="Profile"
-                    style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover' }}
+                    style={{
+                      width: '150px', // Increase width
+                      height: '150px', // Increase height
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      objectPosition: 'top' // Adjust to show more of the head
+                    }}
                   />
-                )}                <Card.Text>Email: {user.email}</Card.Text>
+                )}
+                <Card.Text>Email: {user.email}</Card.Text>
                 <Card.Text>Phone: {user.phone}</Card.Text>
                 {/* Profile Picture Upload */}
                 <Form.Group controlId="formFile">
@@ -204,6 +211,16 @@ const UserProfileComponent: React.FC = () => {
                       </Pie>
                       <Tooltip />
                     </PieChart>
+
+                    {/* Labels for Profit and Investment */}
+                    <div className="d-flex justify-content-between mt-3">
+                      <div style={{ color: '#ff7300' }}>
+                        <strong>Investment:</strong> ₹{totalInvestment}
+                      </div>
+                      <div style={{ color: '#82ca9d' }}>
+                        <strong>Profit:</strong> ₹{totalProfit}
+                      </div>
+                    </div>
                   </Card.Body>
                 </Card>
               </Col>

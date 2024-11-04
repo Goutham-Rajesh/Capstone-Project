@@ -72,6 +72,8 @@ const App: React.FC = () => {
                 <Route path="/CreatorBidPage" element={<CreatorBidPage/>} />
                 <Route path="/UserBidPage" element={<UserBidPage />} />
                 <Route path="/About" element={renderAbout()}/>
+                <Route path="/logout" element={<Logout />} />
+                <Route path="/userProfile" element={<UserProfile />} />
             </Routes>
         </Router>
     );
