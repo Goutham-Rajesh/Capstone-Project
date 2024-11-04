@@ -14,10 +14,10 @@ interface Member {
 // MembersInfo component
 const MembersInfo: React.FC = () => {
     const[members,setMembers]=useState([])
-    const location=useLocation()
+    const location = useLocation();
 
     const fetchMembers = async () => {
-        const members = await axios.get(`http://localhost:5001/chitFund/AllparticipantsInfo/672705b29adcb314c4fc7e02`)
+        const members = await axios.get(`http://localhost:5001/chitFund/AllparticipantsInfo/${location.state?.id}`)
         setMembers(members.data);
     }
  

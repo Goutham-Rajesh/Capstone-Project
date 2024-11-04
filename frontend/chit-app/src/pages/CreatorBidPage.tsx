@@ -227,7 +227,7 @@ const CreatorBidPage = () => {
     return (
         <>
             <ResponsiveAppBar pages={['Creator Bid Info','Member Info']} isLoggedIn={true} />
-            <div><h2>CreatorBidPage</h2></div>
+            <div><h2>{chitInfo?.name}</h2></div>
             <table className="table">
                 <thead>
                     <tr>
@@ -279,22 +279,22 @@ const CreatorBidPage = () => {
 
 
 
-           
-            <div className="container">
-            { chitInfo && emails.length <= chitInfo.maxParticipants && chitInfo.Participants.length >= chitInfo.maxParticipants && !(emails.length==0) ?
+{ chitInfo && emails.length <= chitInfo.maxParticipants && chitInfo.Participants.length >= chitInfo.maxParticipants && !(emails.length==0) ?
             <button  className="btn btn-primary position-fixed" 
             style={{ right: '20px' }}  onClick={() => setShowModal(true)}>Add Bid</button> : <p></p>}
          
+            <div className="container">
+           
              <br style={{ display: 'none' }} />
             
-             { chitInfo && chitInfo.Participants.length < chitInfo.maxParticipants && !(emails.length==0) ?
+             { chitInfo && chitInfo.Participants.length < chitInfo.maxParticipants ?
              <div className="card">
              <div className="card-body">
              Still {chitInfo.maxParticipants-chitInfo.Participants.length} needs to join to start the  chit  
              </div>
            </div>
              :<p></p>}
-
+   <div></div>
 
         
             <div className="row row-cols-1 row-cols-md-2 g-4 mt-5">
