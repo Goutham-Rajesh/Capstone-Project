@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
+import '../css/Table.css'
 
 interface BidData {
     id: number;
@@ -249,6 +250,33 @@ const CreatorBidPage = () => {
                     ))}
                 </tbody>
             </table>
+           {/* <div className="container">
+  <h2>Bid Details <small>Responsive Table</small></h2>
+  <ul className="responsive-table">
+    <li className="table-header">
+      <div className="col col-1">No.</div>
+      <div className="col col-2">Date</div>
+      <div className="col col-3">Bid Winner</div>
+      <div className="col col-4">Bid Amount</div>
+      <div className="col col-5">Commission Received</div>
+      <div className="col col-6">Remaining</div>
+    </li>
+    {bids.map((bid, index) => (
+      <li className="table-row" key={bid.id}>
+        <div className="col col-1" data-label="No.">{index + 1}</div>
+        <div className="col col-2" data-label="Date">{new Date(bid.BidDate).toLocaleDateString()}</div>
+        <div className="col col-3" data-label="Bid Winner">{userNames[bid.UserID] || 'Loading...'}</div>
+        <div className="col col-4" data-label="Bid Amount">{bid.BidAmount}</div>
+        <div className="col col-5" data-label="Commission Received">{(bid.BidAmount * 0.05).toFixed(2)}</div>
+        <div className="col col-6" data-label="Remaining">{(amount - bid.BidAmount - (bid.BidAmount * 0.05)).toFixed(2)}</div>
+      </li>
+    ))}
+  </ul>
+</div> */}
+
+
+
+
            
             <div className="container">
             { chitInfo && emails.length <= chitInfo.maxParticipants && chitInfo.Participants.length >= chitInfo.maxParticipants && !(emails.length==0) ?

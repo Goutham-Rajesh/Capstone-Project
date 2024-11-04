@@ -4,12 +4,12 @@ const ChitfundsSchema = new mongoose.Schema({
     name: String,
     totalAmount:Number,
     maxParticipants:Number,
-    duration:String,
+    duration:Number,
     startDate:Date,
     EndDate:Date,
     CreatorID:Number,
-    Participants:[Number],
-    chitType:String
+    Participants:[Number]
+
 });
 
 export const Chitfunds = mongoose.model('Chitfunds', ChitfundsSchema);

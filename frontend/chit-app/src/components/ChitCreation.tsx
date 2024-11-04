@@ -6,10 +6,8 @@ interface ChitFund {
     name: string;
     totalAmount: number;
     maxParticipants: number;
-    duration: string;
+    duration: number;
     startDate: Date;
-    endDate: Date;
-    chitType: 'Savings' | 'Biddings';
     CreatorID: number;
     participants: number[];
 }
@@ -18,13 +16,11 @@ const ChitFundForm: React.FC = () => {
     const navigate=useNavigate();
     const [formData, setFormData] = useState<ChitFund>({
         name: '',
-        totalAmount: 0,
+        totalAmount:0,
         maxParticipants: 0,
-        duration: '',
+        duration:0,
         startDate: new Date(),
-        endDate: new Date(),
-        chitType: 'Savings',
-        CreatorID: Number(sessionStorage.getItem('userId')) || 0,
+        CreatorID: Number(sessionStorage.getItem('userId')),
         participants: [],
     });
 
@@ -35,13 +31,34 @@ const ChitFundForm: React.FC = () => {
             [name]: name === 'totalAmount' || name === 'maxParticipants' ? Number(value) : value,
         });
     };
+    function calculateEndDate(startDate: Date, duration: number): string {
+        
+        const endDate = new Date(startDate); // Create a new Date object to avoid mutating the original
+        endDate.setMonth(endDate.getMonth() + duration); 
+        console.log(startDate)
+        console.log(endDate)// Add the duration in months
+    
+        return endDate.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
+    }
+    
 
     const token = sessionStorage.getItem('token');
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5001/createChitFund', formData, {
+            const response = await axios.post('http://localhost:5001/createChitFund',{
+                name: formData.name,
+    totalAmount:formData.totalAmount,
+    maxParticipants:formData.duration,
+    duration:formData.duration,
+    startDate:formData.startDate,
+    EndDate:calculateEndDate(formData.startDate, formData.duration),
+    CreatorID:sessionStorage.getItem("userId"),
+    Participants:formData.participants
+
+
+            }, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -72,34 +89,21 @@ const ChitFundForm: React.FC = () => {
                                 </div>
                             </div>
                             <div className="row justify-content-between text-left">
-                                <div className="form-group col-sm-6">
+                                {/* <div className="form-group col-sm-6">
                                     <label className="form-control-label px-3">Max Participants<span className="text-danger"> *</span></label>
                                     <input type="number" name="maxParticipants" value={formData.maxParticipants} onChange={handleChange} className="form-control" required />
-                                </div>
+                                </div> */}
                                 <div className="form-group col-sm-6">
                                     <label className="form-control-label px-3">Duration<span className="text-danger"> *</span></label>
-                                    <input type="text" name="duration" value={formData.duration} onChange={handleChange} className="form-control" required />
+                                    <input type="number" name="duration" value={formData.duration} onChange={handleChange} className="form-control" required />
                                 </div>
                             </div>
                             <div className="row justify-content-between text-left">
                                 <div className="form-group col-sm-6">
                                     <label className="form-control-label px-3">Start Date<span className="text-danger"> *</span></label>
-                                    <input type="date" name="startDate" value={formData.startDate.toISOString().substring(0, 10)} onChange={handleChange} className="form-control" required />
+                                    <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className="form-control" required />
                                 </div>
-                                <div className="form-group col-sm-6">
-                                    <label className="form-control-label px-3">End Date<span className="text-danger"> *</span></label>
-                                    <input type="date" name="endDate" value={formData.endDate.toISOString().substring(0, 10)} onChange={handleChange} className="form-control" required />
                                 </div>
-                            </div>
-                            <div className="row justify-content-between text-left">
-                                <div className="form-group col-sm-12">
-                                    <label className="form-control-label px-3">Chit Type<span className="text-danger"> *</span></label>
-                                    <select name="chitType" value={formData.chitType} onChange={handleChange} className="form-control">
-                                        <option value="Savings">Savings</option>
-                                        <option value="Biddings">Biddings</option>
-                                    </select>
-                                </div>
-                            </div>
                             <div className="row justify-content-end">
                                 <div className="form-group col-sm-6">
                                     <button type="submit" className="btn btn-primary btn-block">Create Chit Fund</button>
