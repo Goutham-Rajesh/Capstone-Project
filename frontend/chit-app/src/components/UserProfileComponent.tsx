@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Label } from 'recharts';
-import { Container, Row, Col, Card, Spinner, Button, Form } from 'react-bootstrap';
+import { Container, Row, Col, Card, Spinner, Button, Form, Modal } from 'react-bootstrap';
 import axios from 'axios';
 
 interface ChitFund {
@@ -29,7 +29,7 @@ const UserProfileComponent: React.FC = () => {
   const [joinedChitFunds, setJoinedChitFunds] = useState<ChitFund[]>([]);
   const [availableChitFunds, setAvailableChitFunds] = useState<ChitFund[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
-
+  const [showModal, setShowModal] = useState<boolean>(false); // State for modal visibility
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -38,7 +38,6 @@ const UserProfileComponent: React.FC = () => {
       const token = sessionStorage.getItem('token');
 
       try {
-        // Fetch joined chit funds
         const joinedChitResponse = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFundByParticipantId/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -49,15 +48,10 @@ const UserProfileComponent: React.FC = () => {
         const joinedChitFundsData = joinedChitResponse.data;
         setJoinedChitFunds(joinedChitFundsData);
 
-        // Calculate total investment
         const totalInvestment = joinedChitFundsData.reduce((sum, chit) => sum + chit.totalAmount, 0);
         setTotalInvestment(totalInvestment);
 
-        // Hardcoded total profit value
-        const hardcodedTotalProfit = 5000;
-        setTotalProfit(hardcodedTotalProfit);
-
-        // Fetch bid details to calculate total profit (currently commented out)
+         // Fetch bid details to calculate total profit (currently commented out)
         /*
         const bidDetailsResponse = await axios.get<{ amountWon: number; totalInterest: number }[]>(`http://127.0.0.1:5001/getBiddetailsByParticipantId/${userId}`, {
           headers: {
@@ -67,7 +61,9 @@ const UserProfileComponent: React.FC = () => {
         });
         */
 
-        // Fetch available chit funds
+        const hardcodedTotalProfit = 5000; // Replace with actual logic if needed
+        setTotalProfit(hardcodedTotalProfit);
+
         const availableChitResponse = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFunds`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -79,7 +75,6 @@ const UserProfileComponent: React.FC = () => {
         const availableChits = allChitFunds.filter(chit => !joinedChitFundsData.some(joined => joined._id === chit._id));
         setAvailableChitFunds(availableChits);
 
-        // Fetch user details
         const userResponse = await axios.get<User>(`http://127.0.0.1:5000/user/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -117,27 +112,22 @@ const UserProfileComponent: React.FC = () => {
     if (imageFile) {
       const formData = new FormData();
       formData.append('file', imageFile);
-      formData.append('upload_preset', 'new_preset'); // Replace with your Cloudinary upload preset
+      formData.append('upload_preset', 'new_preset');
 
       try {
         const response = await axios.post('https://api.cloudinary.com/v1_1/dwabgca1d/image/upload', formData);
         const profilePicUrl = response.data.secure_url;
-        console.log('Image uploaded successfully:', profilePicUrl);
 
-        // Send the profile picture URL to your backend to save it
         await axios.patch(`http://127.0.0.1:5000/userProfile/${user?.userId}`, { profilePic: profilePicUrl });
 
-        // Update user state
-        setUser(prevUser => ({
-          ...prevUser!,
-          profilePic: profilePicUrl,
-        }));
+        setUser(prevUser => (prevUser ? { ...prevUser, profilePic: profilePicUrl } : prevUser));
       } catch (error) {
         console.error('Error uploading image:', error);
+      } finally {
+        setShowModal(false); // Close modal after upload
       }
     }
   };
-
 
   return (
     <Container className="mt-5">
@@ -147,31 +137,48 @@ const UserProfileComponent: React.FC = () => {
         user && (
           <>
             <Card className="mb-4">
-              <Card.Body>
+              <Card.Body style={{ textAlign: 'center' }}>
                 <Card.Title>User Profile: {user.name}</Card.Title>
                 {user.profilePic && (
                   <img
                     src={user.profilePic}
                     alt="Profile"
                     style={{
-                      width: '150px', // Increase width
-                      height: '150px', // Increase height
+                      width: '150px',
+                      height: '150px',
                       borderRadius: '50%',
                       objectFit: 'cover',
-                      objectPosition: 'top' // Adjust to show more of the head
+                      objectPosition: 'top',
+                      marginBottom: '10px'
                     }}
                   />
                 )}
                 <Card.Text>Email: {user.email}</Card.Text>
                 <Card.Text>Phone: {user.phone}</Card.Text>
-                {/* Profile Picture Upload */}
-                <Form.Group controlId="formFile">
-                  <Form.Label>Upload Profile Picture</Form.Label>
-                  <Form.Control type="file" onChange={handleFileChange} />
-                </Form.Group>
-                <Button variant="primary" onClick={handleUpload}>Upload</Button>
+                <Button variant="primary" onClick={() => setShowModal(true)}>Upload Profile</Button>
               </Card.Body>
             </Card>
+
+            {/* Modal for Upload */}
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>Upload Profile Picture</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form.Group controlId="formFile">
+                  <Form.Label>Choose a file</Form.Label>
+                  <Form.Control type="file" onChange={handleFileChange} />
+                </Form.Group>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowModal(false)}>
+                  Close
+                </Button>
+                <Button variant="primary" onClick={handleUpload}>
+                  Upload
+                </Button>
+              </Modal.Footer>
+            </Modal>
 
             <Row>
               <Col md={6}>
@@ -212,7 +219,6 @@ const UserProfileComponent: React.FC = () => {
                       <Tooltip />
                     </PieChart>
 
-                    {/* Labels for Profit and Investment */}
                     <div className="d-flex justify-content-between mt-3">
                       <div style={{ color: '#ff7300' }}>
                         <strong>Investment:</strong> ₹{totalInvestment}

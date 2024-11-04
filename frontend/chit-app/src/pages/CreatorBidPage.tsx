@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import '../css/Table.css'
+import ResponsiveAppBar from '../components/NavBar';
 
 interface BidData {
     id: number;
@@ -225,7 +226,8 @@ const CreatorBidPage = () => {
 
     return (
         <>
-            <div>CreatorBidPage</div>
+            <ResponsiveAppBar pages={['Creator Bid Info','Member Info']} isLoggedIn={true} />
+            <div><h2>CreatorBidPage</h2></div>
             <table className="table">
                 <thead>
                     <tr>
