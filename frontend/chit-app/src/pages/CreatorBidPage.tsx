@@ -195,6 +195,7 @@ const CreatorBidPage = () => {
 
         const id = location.state?.id;
         console.log(bidAmount)
+        console.log(id)
       
         const response = await axios.post('http://localhost:5002/createBid', {
             ChitFundID: id,
@@ -226,7 +227,7 @@ const CreatorBidPage = () => {
 
     return (
         <>
-            <ResponsiveAppBar pages={['Creator Bid Info','Member Info']} isLoggedIn={true} />
+        <ResponsiveAppBar pages={['Creator Bid Info','Member Info']} isLoggedIn={true} />
             <div><h2>{chitInfo?.name}</h2></div>
             <table className="table">
                 <thead>
