@@ -5,14 +5,14 @@ import axios from 'axios';
 import ResponsiveAppBar from '../components/NavBar';
 
 interface Chit {
-  _id:String,
-  name: String,
-  totalAmount:Number,
-  maxParticipants:Number,
-  duration:Number,
-  startDate:Date,
-  CreatorID:Number,
-  Participants:[Number]// New field for commission
+  _id: String;
+  name: String;
+  totalAmount: Number;
+  maxParticipants: Number;
+  duration: Number;
+  startDate: Date;
+  CreatorID: Number;
+  Participants: [Number]; // New field for commission
 }
 
 interface Creator {
@@ -24,6 +24,18 @@ interface Creator {
   createdChits: Chit[];
 }
 
+interface Bid {
+  BidID: string;
+  ChitFundID: string;
+  UserID: string;
+  BidAmount: number;
+  BidDate: Date;
+}
+
+type ChitFundBidAmount = {
+  [chitFundID: string]: number; // Key: ChitFundID, Value: Total 5% commission for that ChitFundID
+};
+
 const ChitCreatorProfileComponent: React.FC = () => {
   const [creator, setCreator] = useState<Creator | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -31,37 +43,13 @@ const ChitCreatorProfileComponent: React.FC = () => {
   const [totalCommission, setTotalCommission] = useState<number>(0);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [toChits,setToChits] =useState<Chit[]>([])// State for modal visibility
+  const [toChits, setToChits] = useState<Chit[]>([]); // State for modal visibility
+  const [chitFundBidAmount, setChitFundBidAmount] = useState<ChitFundBidAmount>({});
 
   useEffect(() => {
     const fetchCreatorProfile = async () => {
       setLoading(true);
-      
-      // Hardcoded creator data
-      // const hardcodedCreator: Creator = {
-      //   creatorId: 1,
-      //   name: 'John Doe',
-      //   email: 'john.doe@example.com',
-      //   phone: '123-456-7890',
-      //   profilePic: 'https://via.placeholder.com/150', // Placeholder profile picture
-      //   createdChits: [
-      //     { _id: '1', name: 'Chit Fund A', totalAmount: 10000, participants: 10, commissionEarned: 1000 },
-      //     { _id: '2', name: 'Chit Fund B', totalAmount: 15000, participants: 15, commissionEarned: 1500 },
-      //     { _id: '3', name: 'Chit Fund C', totalAmount: 20000, participants: 20, commissionEarned: 2000 },
-      //   ],
-      // };
 
-      // // Simulate API response delay
-      // setTimeout(() => {
-      //   setCreator(hardcodedCreator);
-      //   setTotalChitsCreated(hardcodedCreator.createdChits.length);
-      //   const totalCommission = hardcodedCreator.createdChits.reduce((sum, chit) => sum + chit.commissionEarned, 0);
-      //   setTotalCommission(totalCommission);
-      //   setLoading(false);
-      // }, 1000);
-
-      // Uncomment the following code to fetch data from an API
-      
       const creatorId = sessionStorage.getItem('userId');
       const token = sessionStorage.getItem('token');
 
@@ -73,33 +61,64 @@ const ChitCreatorProfileComponent: React.FC = () => {
           },
         });
         setCreator(creatorResponse.data);
-      
-         const totalChitResponse = await axios.get(`http://127.0.0.1:5001/getChitFundByCreatorId/${creatorId}`);
+
+        const totalChitResponse = await axios.get(
+          `http://127.0.0.1:5001/getChitFundByCreatorId/${creatorId}`
+        );
 
         const totalChitsCreated = totalChitResponse.data.length;
 
         setTotalChitsCreated(totalChitsCreated);
-        setToChits(totalChitResponse.data)
+        setToChits(totalChitResponse.data);
+        const chitList: Chit[] = totalChitResponse.data;
 
-       // const totalCommission = creatorResponse.data.createdChits.reduce((sum, chit) => sum + chit.commissionEarned, 0);
-        //setTotalCommission(totalCommission);
+        // Step 2: Process each chit fund and fetch bids
+        let updatedChitFundBidAmount: ChitFundBidAmount = {};
+        let overallCommission = 0;
+
+        for (let chit of chitList) {
+          const chitId = chit._id;
+          const chitName = chit.name;
+          // Fetch bids for the current Chit Fund
+          const bidResponse = await axios.get(
+            `http://localhost:5002/getBidByChitFundId/${chitId}`
+          );
+          const bids: Bid[] = bidResponse.data; // Assuming response is an array of Bid objects
+
+          // Step 3: Calculate 5% commission for each bid
+          let totalBidCommission = 0;
+          for (let bid of bids) {
+            // Calculate 5% of BidAmount
+            totalBidCommission += bid.BidAmount * 0.05;
+          }
+
+          // Step 4: Update commission by ChitFundID in the state
+          if (!updatedChitFundBidAmount[chitName]) {
+            updatedChitFundBidAmount[chitName] = 0;
+          }
+          updatedChitFundBidAmount[chitName] += totalBidCommission;
+          overallCommission += totalBidCommission;
+        }
+
+        // Step 5: Set the new state with the updated commissions
+        setChitFundBidAmount(updatedChitFundBidAmount);
+        setTotalCommission(overallCommission);
       } catch (error) {
-        console.error("Error fetching creator profile:", error);
+        console.error('Error fetching creator profile:', error);
       } finally {
         setLoading(false);
       }
-      
-
     };
 
     fetchCreatorProfile();
   }, []);
 
   const renderPieChartData = () => {
-    return [
-      { name: 'Total Chits Created', value: totalChitsCreated },
-      { name: 'Total Commission Earned', value: totalCommission },
-    ];
+    return Object.entries(chitFundBidAmount).map(([chitFundName, commission], index) => ({
+      name: chitFundName,
+      value: commission,
+      color: `#${Math.floor(Math.random() * 16777215).toString(16)}`, // Random color for each segment
+    }));
   };
 
   const totalAmount = totalChitsCreated + totalCommission;
@@ -117,7 +136,10 @@ const ChitCreatorProfileComponent: React.FC = () => {
       formData.append('upload_preset', 'new_preset');
 
       try {
-        const response = await axios.post('https://api.cloudinary.com/v1_1/dwabgca1d/image/upload', formData);
+        const response = await axios.post(
+          'https://api.cloudinary.com/v1_1/dwabgca1d/image/upload',
+          formData
+        );
         const profilePicUrl = response.data.secure_url;
 
         // Uncomment the following code to update the profile picture in the API
@@ -125,7 +147,9 @@ const ChitCreatorProfileComponent: React.FC = () => {
         await axios.patch(`http://127.0.0.1:5000/creatorProfile/${creator?.creatorId}`, { profilePic: profilePicUrl });
         */
 
-        setCreator(prevCreator => (prevCreator ? { ...prevCreator, profilePic: profilePicUrl } : prevCreator));
+        setCreator((prevCreator) =>
+          prevCreator ? { ...prevCreator, profilePic: profilePicUrl } : prevCreator
+        );
       } catch (error) {
         console.error('Error uploading image:', error);
       } finally {
@@ -155,13 +179,15 @@ const ChitCreatorProfileComponent: React.FC = () => {
                       borderRadius: '50%',
                       objectFit: 'cover',
                       objectPosition: 'top',
-                      marginBottom: '10px'
+                      marginBottom: '10px',
                     }}
                   />
                 )}
                 <Card.Text>Email: {creator.email}</Card.Text>
                 <Card.Text>Phone: {creator.phone.slice(2)}</Card.Text>
-                <Button variant="primary" onClick={() => setShowModal(true)}>Upload Profile</Button>
+                <Button variant="primary" onClick={() => setShowModal(true)}>
+                  Upload Profile
+                </Button>
               </Card.Body>
             </Card>
 
@@ -186,6 +212,7 @@ const ChitCreatorProfileComponent: React.FC = () => {
               </Modal.Footer>
             </Modal>
 
+            {/* Chit Fund Overview */}
             <Row>
               <Col md={6}>
                 <Card className="mb-4">
@@ -217,7 +244,7 @@ const ChitCreatorProfileComponent: React.FC = () => {
                           style={{ fontSize: '16px', fontWeight: 'bold', fill: '#333' }}
                         />
                         {renderPieChartData().map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={index === 0 ? '#ff7300' : '#82ca9d'} />
+                          <Cell key={`cell-${index}`} fill={_.color} />
                         ))}
                       </Pie>
                       <Tooltip />
@@ -236,18 +263,38 @@ const ChitCreatorProfileComponent: React.FC = () => {
               </Col>
             </Row>
 
+            {/* Created Chits */}
             <Card className="mb-4">
               <Card.Body>
                 <Card.Title>Created Chits</Card.Title>
                 <ul>
-                {toChits.map((chit, index) => (
- <li key={index + 1}>
- {chit.name} -- ₹{chit.totalAmount.toString()}
-</li>
-))}
+                  {toChits.map((chit, index) => (
+                    <li key={index + 1}>
+                      {chit.name} -- ₹{chit.totalAmount.toString()}
+                    </li>
+                  ))}
                 </ul>
               </Card.Body>
             </Card>
+
+            {/* Commission Details Section */}
+            <div className="chit-fund-list mt-4">
+              {Object.entries(chitFundBidAmount).map(([chitFundID, commission]) => (
+                <Card key={chitFundID} className="mb-3 shadow-sm">
+                  <Card.Body>
+                    <Card.Title className="text-center text-primary">
+                      Chit Fund: {chitFundID}
+                    </Card.Title>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div className="d-flex flex-column">
+                        <strong>Total Commission</strong>
+                        <p className="h4 text-success">₹{commission.toFixed(2)}</p>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              ))}
+            </div>
           </>
         )
       )}
