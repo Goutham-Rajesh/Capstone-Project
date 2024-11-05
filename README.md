@@ -56,7 +56,7 @@ To start the frontend application:
    npm run dev
    ```
 
-   This will launch the frontend application in development mode, usually accessible at `http://localhost:3000`.
+   This will launch the frontend application in development mode, usually accessible at `http://localhost:5173`.
 
 ### 3. Setting Up the Backend
 
