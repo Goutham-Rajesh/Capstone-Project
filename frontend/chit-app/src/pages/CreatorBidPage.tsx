@@ -227,7 +227,7 @@ const CreatorBidPage = () => {
 
     return (
         <>
-        <ResponsiveAppBar pages={['Creator Bid Info','Member Info']} isLoggedIn={true} />
+        <ResponsiveAppBar pages={['Active Chit','Creator Bid Info']} isLoggedIn={true} />
             <div><h2>{chitInfo?.name}</h2></div>
             <table className="table">
                 <thead>

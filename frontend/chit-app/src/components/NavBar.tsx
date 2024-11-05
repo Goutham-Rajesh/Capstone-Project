@@ -96,6 +96,9 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
       case 'Member Info':
         navigate('/MembersInfo');
         break;
+      case 'Creator Profile':
+        navigate('/CreatorProfile');
+        break;
       default:
         break;
     }
@@ -106,6 +109,9 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
     switch (setting) {
       case 'Profile':
         navigate('/UserProfile'); // Navigate to UserProfile
+        break;
+      case 'Creator Profile':
+        navigate('/CreatorProfile');
         break;
       case 'Payment Details':
         navigate('/PaymentDetails'); // Assuming you have this route
@@ -146,7 +152,8 @@ function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
         (page === 'Profile' && path === '/UserProfile')||
         (page === 'Creator Bid Info' && path === '/CreatorBidPage')||
         (page === 'Bid Info' && path === '/UserBidPage')||
-        (page === 'Member Info' && path === '/MembersInfo')
+        (page === 'Member Info' && path === '/MembersInfo')||
+        (page === 'Creator Profile' && path === '/CreatorProfile')
       );
     });
 

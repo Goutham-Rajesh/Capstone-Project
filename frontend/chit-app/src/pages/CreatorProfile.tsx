@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Label } from 'recharts';
 import { Container, Row, Col, Card, Spinner, Button, Form, Modal } from 'react-bootstrap';
 import axios from 'axios';
+import ResponsiveAppBar from '../components/NavBar';
 
 interface Chit {
   _id: string;
@@ -125,6 +126,7 @@ const ChitCreatorProfileComponent: React.FC = () => {
   };
 
   return (
+    <> <ResponsiveAppBar pages={['Active Chit','Create Chit','Creator Profile','About']} isLoggedIn={true} />
     <Container className="mt-5">
       {loading ? (
         <Spinner animation="border" variant="primary" />
@@ -241,6 +243,7 @@ const ChitCreatorProfileComponent: React.FC = () => {
         )
       )}
     </Container>
+    </>
   );
 };
 

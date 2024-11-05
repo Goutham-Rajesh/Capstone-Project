@@ -35,7 +35,7 @@ function CreatorDashboard() {
 
     return (
         <div>
-            <Navbar pages={['Active Chit','Create Chit','Profile','About']} isLoggedIn={true} />
+            <Navbar pages={['Active Chit','Create Chit','Creator Profile','About']} isLoggedIn={true} />
             {user ? <h1>Welcome {user.name}</h1> : <h1>Loading...</h1>}
             <CreatorChitFundCard/>
             
