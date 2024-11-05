@@ -20,11 +20,25 @@ ChitLink/
 │       └── tsconfig.json      # TypeScript configuration for frontend
 │
 └── backend/                   # Backend codebase (Express/Node.js)
-    ├── controllers/           # API route controllers
-    ├── models/                # Database models (if applicable)
-    ├── routes/                # API routes
-    ├── package.json           # Backend dependencies and scripts
-    └── tsconfig.json          # TypeScript configuration for backend
+    ├──ChitFund
+    │   ├── controllers/           # API route controllers
+    │   ├── models/                # Database models (if applicable)
+    |   ├── routes/                # API routes
+    |   ├── package.json           # Backend dependencies and scripts
+    |   └── tsconfig.json          # TypeScript configuration for backend
+    |
+    ├──UserMicroservice/
+    |    ├── controllers/ 
+    |    ├── models/
+    |    ├── routes/
+    |    ├── package.json
+    |    └── tsconfig.json
+    ├──Bid
+    |   ├── controllers/ 
+    |   ├── models/
+    |   ├── routes/
+    |   ├── package.json
+    |   └── tsconfig.json
 ```
 
 ## Getting Started
