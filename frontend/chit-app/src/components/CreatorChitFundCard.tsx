@@ -2,29 +2,27 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../css/UserChitFund.css'; // Ensure this file contains the CSS for hover effects
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { env } from 'process';
 import { useNavigate } from 'react-router-dom';
 
 interface ChitFund {
-  _id: string; // Change this to string if needed
+  _id: string;
   name: string;
   totalAmount: number;
   maxParticipants: number;
   duration: string;
-  startDate: Date; // Or string, depending on your API response
-  endDate: Date; // Or string, depending on your API response
+  startDate: Date;
+  endDate: Date;
   creatorID: number;
   participants: number[];
   chitType: string;
 }
 
 const CreatorChitFundCard = () => {
-  const [availableChitFunds, setAvailableChitFunds] = useState<ChitFund[]>([])
+  const [availableChitFunds, setAvailableChitFunds] = useState<ChitFund[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch available chit funds
-
     const fetchChitFunds = async () => {
       try {
         const response = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitfundByCreatorId/${sessionStorage.getItem('userId')}`);
@@ -38,26 +36,22 @@ const CreatorChitFundCard = () => {
   }, []); // Make sure to add an empty dependency array to run this effect only once
 
   function handleClick(chit: ChitFund): void {
-
     const deleteChitGroup = async () => {
       try {
         const response = await axios.delete(`http://127.0.0.1:5001/deleteChitFundById/${chit._id}`);
         console.log(response.data);
         const updatedchit = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFundByCreatorId/${sessionStorage.getItem("userId")}`);
         setAvailableChitFunds(updatedchit.data);
-      }
-      catch (error) {
+      } catch (error) {
         console.error("Error updating participants:", error);
       }
     }
 
     deleteChitGroup();
-
   }
 
   function handleInfo(chit: ChitFund): void {
-    navigate('/CreatorBidPage', { state: { id: chit._id} });
-    throw new Error('Function not implemented.');
+    navigate('/CreatorBidPage', { state: { id: chit._id } });
   }
 
   return (
@@ -75,8 +69,10 @@ const CreatorChitFundCard = () => {
                   Participants: {chit.maxParticipants}<br />
                   Start Date: {new Date(chit.startDate).toLocaleDateString()}<br />
                 </p>
-                <button className="btn btn-danger me-2" onClick={() => handleClick(chit)}>Delete</button>
-                <button className="btn btn-danger" onClick={() => handleInfo(chit)}>Bid Info</button>
+                <div className="d-flex justify-content-between">
+                  <button className="btn btn-danger" onClick={() => handleClick(chit)}>Delete</button>
+                  <button className="btn btn-info" onClick={() => handleInfo(chit)}>Bid Info</button>
+                </div>
               </div>
             </div>
           </div>

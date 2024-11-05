@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { PieChart, Pie, Cell, Tooltip, Label } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Label, ResponsiveContainer } from 'recharts';
 import { Container, Row, Col, Card, Spinner, Button, Form, Modal } from 'react-bootstrap';
 import axios from 'axios';
+import ResponsiveAppBar from '../components/NavBar';
 
 interface Chit {
   _id: String;
@@ -117,10 +118,11 @@ const ChitCreatorProfileComponent: React.FC = () => {
       name: chitFundName,
       value: commission,
       color: `#${Math.floor(Math.random() * 16777215).toString(16)}`, // Random color for each segment
+      commission: commission.toFixed(2), // Add commission as a label
     }));
   };
 
-  const totalAmount = totalChitsCreated + totalCommission;
+  const totalAmount =  totalCommission;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -158,145 +160,151 @@ const ChitCreatorProfileComponent: React.FC = () => {
   };
 
   return (
-    <Container className="mt-5">
-      {loading ? (
-        <Spinner animation="border" variant="primary" />
-      ) : (
-        creator && (
-          <>
-            <Card className="mb-4">
-              <Card.Body style={{ textAlign: 'center' }}>
-                <Card.Title>Chit Creator Profile: {creator.name}</Card.Title>
-                {creator.profilePic && (
-                  <img
-                    src={creator.profilePic}
-                    alt="Profile"
-                    style={{
-                      width: '150px',
-                      height: '150px',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      objectPosition: 'top',
-                      marginBottom: '10px',
-                    }}
-                  />
-                )}
-                <Card.Text>Email: {creator.email}</Card.Text>
-                <Card.Text>Phone: {creator.phone.slice(2)}</Card.Text>
-                <Button variant="primary" onClick={() => setShowModal(true)}>
-                  Upload Profile
-                </Button>
-              </Card.Body>
-            </Card>
+    <>
+      <ResponsiveAppBar pages={['Active Chit', 'Create Chit', 'Creator Profile', 'About']} isLoggedIn={true} />
+      <Container className="mt-5">
+        {loading ? (
+          <Spinner animation="border" variant="primary" />
+        ) : (
+          creator && (
+            <>
+              <Card className="mb-4">
+                <Card.Body style={{ textAlign: 'center' }}>
+                  <Card.Title>Chit Creator Profile: {creator.name}</Card.Title>
+                  {creator.profilePic && (
+                    <img
+                      src={creator.profilePic}
+                      alt="Profile"
+                      style={{
+                        width: '150px',
+                        height: '150px',
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        objectPosition: 'top',
+                        marginBottom: '10px',
+                      }}
+                    />
+                  )}
+                  <Card.Text>Email: {creator.email}</Card.Text>
+                  <Card.Text>Phone: {creator.phone.slice(2)}</Card.Text>
+                  <Button variant="primary" onClick={() => setShowModal(true)}>
+                    Upload Profile
+                  </Button>
+                </Card.Body>
+              </Card>
 
-            {/* Modal for Upload */}
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-              <Modal.Header closeButton>
-                <Modal.Title>Upload Profile Picture</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <Form.Group controlId="formFile">
-                  <Form.Label>Choose a file</Form.Label>
-                  <Form.Control type="file" onChange={handleFileChange} />
-                </Form.Group>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowModal(false)}>
-                  Close
-                </Button>
-                <Button variant="primary" onClick={handleUpload}>
-                  Upload
-                </Button>
-              </Modal.Footer>
-            </Modal>
+              {/* Modal for Upload */}
+              <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Upload Profile Picture</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Form.Group controlId="formFile">
+                    <Form.Label>Choose a file</Form.Label>
+                    <Form.Control type="file" onChange={handleFileChange} />
+                  </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={() => setShowModal(false)}>
+                    Close
+                  </Button>
+                  <Button variant="primary" onClick={handleUpload}>
+                    Upload
+                  </Button>
+                </Modal.Footer>
+              </Modal>
 
-            {/* Chit Fund Overview */}
-            <Row>
-              <Col md={6}>
-                <Card className="mb-4">
-                  <Card.Body>
-                    <Card.Title>Chit Overview</Card.Title>
-                    <Card.Text>Total Chits Created: {totalChitsCreated}</Card.Text>
-                    <Card.Text>Total Commission Earned: ₹{totalCommission}</Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
-              <Col md={6}>
-                <Card className="mb-4">
-                  <Card.Body>
-                    <Card.Title>Chit Breakdown</Card.Title>
-                    <PieChart width={400} height={400}>
-                      <Pie
-                        data={renderPieChartData()}
-                        cx={200}
-                        cy={200}
-                        innerRadius={60}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value"
-                        label
-                      >
-                        <Label
+              {/* Chit Fund Overview */}
+              <Row>
+                <Col md={6}>
+                  <Card className="mb-4">
+                    <Card.Body>
+                      <Card.Title>Chit Overview</Card.Title>
+                      <Card.Text>Total Chits Created: {totalChitsCreated}</Card.Text>
+                      <Card.Text>Total Commission Earned: ₹{totalCommission}</Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+                <Col md={6}>
+                  <Card className="mb-4">
+                    <Card.Body>
+                      <Card.Title>Commission Breakdown</Card.Title>
+                      <ResponsiveContainer width="100%" height={400}>
+                        <PieChart>
+                          <Pie
+                            data={renderPieChartData()}
+                            cx={200}
+                            cy={200}
+                            innerRadius={60}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="value"
+                            label={({ name }) => name} // Show chit fund name as label
+                          >
+                            <Label
                           value={`Total: ₹${totalAmount}`}
                           position="center"
                           style={{ fontSize: '16px', fontWeight: 'bold', fill: '#333' }}
                         />
-                        {renderPieChartData().map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={_.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
+                            {renderPieChartData().map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                          {/* Add total commission in center */}
+                          <Label
+                            value={`Total: ₹${totalCommission.toFixed(2)}`}
+                            position="center"
+                            style={{
+                              fontSize: '20px',
+                              fontWeight: 'bold',
+                              fill: '#000',
+                            }}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
 
-                    <div className="d-flex justify-content-between mt-3">
-                      <div style={{ color: '#ff7300' }}>
-                        <strong>Chits Created:</strong> {totalChitsCreated}
-                      </div>
-                      <div style={{ color: '#82ca9d' }}>
-                        <strong>Commission:</strong> ₹{totalCommission}
-                      </div>
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-            </Row>
+              {/* Created Chits */}
+              <Card className="mb-4">
+                <Card.Body>
+                  <Card.Title>Created Chits</Card.Title>
+                  <ul>
+                    {toChits.map((chit, index) => (
+                      <li key={index + 1}>
+                        {chit.name} -- ₹{chit.totalAmount.toString()}
+                      </li>
+                    ))}
+                  </ul>
+                </Card.Body>
+              </Card>
 
-            {/* Created Chits */}
-            <Card className="mb-4">
-              <Card.Body>
-                <Card.Title>Created Chits</Card.Title>
-                <ul>
-                  {toChits.map((chit, index) => (
-                    <li key={index + 1}>
-                      {chit.name} -- ₹{chit.totalAmount.toString()}
-                    </li>
-                  ))}
-                </ul>
-              </Card.Body>
-            </Card>
-
-            {/* Commission Details Section */}
-            <div className="chit-fund-list mt-4">
-              {Object.entries(chitFundBidAmount).map(([chitFundID, commission]) => (
-                <Card key={chitFundID} className="mb-3 shadow-sm">
-                  <Card.Body>
-                    <Card.Title className="text-center text-primary">
-                      Chit Fund: {chitFundID}
-                    </Card.Title>
-                    <div className="d-flex justify-content-between align-items-center">
-                      <div className="d-flex flex-column">
-                        <strong>Total Commission</strong>
-                        <p className="h4 text-success">₹{commission.toFixed(2)}</p>
+              {/* Commission Details Section */}
+              <div className="chit-fund-list mt-4">
+                {Object.entries(chitFundBidAmount).map(([chitFundID, commission]) => (
+                  <Card key={chitFundID} className="mb-3 shadow-sm">
+                    <Card.Body>
+                      <Card.Title className="text-center text-primary">
+                        Chit Fund: {chitFundID}
+                      </Card.Title>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex flex-column">
+                          <strong>Total Commission</strong>
+                          <p className="h4 text-success">₹{commission.toFixed(2)}</p>
+                        </div>
                       </div>
-                    </div>
-                  </Card.Body>
-                </Card>
-              ))}
-            </div>
-          </>
-        )
-      )}
-    </Container>
+                    </Card.Body>
+                  </Card>
+                ))}
+              </div>
+            </>
+          )
+        )}
+      </Container>
+    </>
   );
 };
 

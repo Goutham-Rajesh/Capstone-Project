@@ -56,7 +56,7 @@ const App: React.FC = () => {
         if (role === '') {
             return <AboutUs pages={["Home", "Login", "Register", "About"]} />;
         } else if (role === 'Chit Creator') {
-            return <AboutUs pages={["Active Chit","Create Chit","Profile","About"]} />;
+            return <AboutUs pages={["Active Chit","Create Chit","Creator Profile","About"]} />;
         } else if(role=== 'Participant'){
             return <AboutUs pages={["Chit Group","Profile","About"]} />;
         }
