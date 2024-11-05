@@ -19,7 +19,7 @@ interface ResponsiveAppBarProps {
   isLoggedIn: boolean; // New prop for user login status
 }
 
-const settings = ['Profile', 'Payment Details', 'Bid Details', 'Logout'];
+const settings = ['Profile', 'Logout'];
 
 function ResponsiveAppBar({ pages, isLoggedIn }: ResponsiveAppBarProps) {
   const navigate = useNavigate();

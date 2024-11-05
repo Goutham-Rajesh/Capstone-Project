@@ -143,7 +143,22 @@ const ChitFundComponent = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="welcome-heading">Welcome {user?.name}</h1>
+      {user ? (
+                <h1
+                    className="text-center mb-4"
+                    style={{
+                        fontWeight: 'bold',      // Makes the text bold
+                        color: '#4B0082',        // Indigo color for a rich look
+                        textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',  // Adds a slight shadow for depth
+                        letterSpacing: '1px',    // Adds spacing between letters
+                        fontSize: '2.5rem'       // Increases font size for impact
+                    }}
+                >
+                    Welcome {user.name}
+                </h1>
+            ) : (
+                <h1 className="text-center">Loading...</h1>
+            )}
       <h2>Available Chit Funds</h2>
       <div className="row">
         {availableChitFunds.map(chit => (
