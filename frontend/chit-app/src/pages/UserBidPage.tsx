@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Session } from 'inspector/promises';
 import ResponsiveAppBar from '../components/NavBar';
+import UserProfileComponent from '../components/UserProfileComponent';
 interface BidData {
   id: number;
   BidDate: string;
