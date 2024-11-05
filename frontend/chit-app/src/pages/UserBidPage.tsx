@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Session } from 'inspector/promises';
 import ResponsiveAppBar from '../components/NavBar';
@@ -35,6 +35,7 @@ const UserBidPage = () => {
   const [BidWon, setBidWon] = useState(0)
   
   const location = useLocation();
+  const navigate=useNavigate()
   
   const fetchUserName = async (userID: number) => {
     if (userNames[userID]) return;
@@ -114,9 +115,15 @@ const UserBidPage = () => {
   
   }, [bids]);
 
+  const handClick = () => {
+    navigate('/MembersInfo', { state: { id: location.state?.id } });
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <>
-      <ResponsiveAppBar pages={['Bid Info','Member Info']} isLoggedIn={true} />
+      <ResponsiveAppBar pages={['Chit Group','Bid Info']} isLoggedIn={true} />
+      <button onClick={()=>handClick()}>Members Info </button>
       <div><h2>UserBidPage</h2></div>
       <table className="table">
         <thead>

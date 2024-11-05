@@ -142,6 +142,47 @@ const getParticipantEmails = async (req:Request, res:Response)=> {
 
 
 
+async function getParticipantsDetails(participants: number[]): Promise<User[]> {
+    const users: User[] = [];
+
+    for (const id of participants) {
+        try {
+            const response = await axios.get<User>(`http://localhost:5000/user/${id}`);
+            console.log(response.data);
+            users.push(response.data);
+        } catch (err) {
+            console.error(`Error fetching details for user ID ${id}:`, err);
+        }
+    }
+    return users;
+}
+
+const getListOfParticipantsByChitfundId = async (req: Request, res: Response) => {
+    try {
+        const chitFund = await Chitfunds.findById(req.params.id);
+
+        if (!chitFund) {
+            res.status(404).json({ message: 'ChitFund not found' });
+        }
+        let participants:number[]=[]
+      if(!chitFund)
+      {
+        res.status(404).json({});
+
+      }
+      else{
+        participants=chitFund.Participants;
+      }
+
+        const users = await getParticipantsDetails(participants);
+        
+         res.status(200).json(users);
+    } catch (error) {
+        console.error("Error in getListOfParticipantsByChitfundId:", error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 
 const getParticipantDetail = async (req:Request, res:Response)=> {
     try {
@@ -196,4 +237,4 @@ const getParticipantDetail = async (req:Request, res:Response)=> {
 
 
 
-export {getChitfunds, getChitfundById, createChitfund,getchitfundByParticipantId,updateChitfundById,getchitfundByCreatorId,deleteChitfundById,removeParticipantFromChitfund,getParticipantEmails,getParticipantDetail};
+export {getChitfunds, getChitfundById, createChitfund,getchitfundByParticipantId,updateChitfundById,getchitfundByCreatorId,deleteChitfundById,removeParticipantFromChitfund,getParticipantEmails,getParticipantDetail,getListOfParticipantsByChitfundId};

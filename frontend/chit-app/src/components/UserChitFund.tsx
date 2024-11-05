@@ -49,29 +49,39 @@ const ChitFundComponent = () => {
   useEffect(() => {
     fetchUser();
   }, []);
-
+  const fetchChitFundsData = async () => {
+    try {
+      // Fetch both joined and all available chit funds in parallel
+      const [joinedResponse, availableResponse] = await Promise.all([
+        axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFundByParticipantId/${sessionStorage.getItem("userId")}`),
+        axios.get<ChitFund[]>('http://127.0.0.1:5001/getChitFunds')
+      ]);
+  
+      const joinedChitFunds = joinedResponse.data;
+      const allChitFunds = availableResponse.data;
+  
+      // Filter out joined chit funds from all available chit funds
+      const filteredAvailableChitFunds = allChitFunds.filter(
+        (chitFund) => !joinedChitFunds.some((joined) => joined._id === chitFund._id)
+      );
+  
+      // Set state with filtered results
+      setJoinedChitFunds(joinedChitFunds);
+      setAvailableChitFunds(filteredAvailableChitFunds);
+  
+    } catch (error) {
+      console.error("Error fetching chit funds:", error);
+    }
+  };
+  
+  // Call the function inside useEffect
   useEffect(() => {
-    const fetchAvailableChitFunds = async () => {
-      try {
-        const response = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFundByParticipantId/${sessionStorage.getItem("userId")}`);
-        setJoinedChitFunds(response.data);
-      } catch (error) {
-        console.error("Error fetching available chit funds:", error);
-      }
-    };
-
-    const fetchChitFunds = async () => {
-      try {
-        const response = await axios.get<ChitFund[]>('http://127.0.0.1:5001/getChitFunds');
-        setAvailableChitFunds(response.data);
-      } catch (error) {
-        console.error("Error fetching chit funds:", error);
-      }
-    };
-
-    fetchChitFunds();
-    fetchAvailableChitFunds();
+    fetchChitFundsData();
   }, []);
+  
+
+
+   
 
   function handleClick(chit: ChitFund): void {
     // Use optional chaining and default to an empty array

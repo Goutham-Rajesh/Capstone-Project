@@ -31,15 +31,7 @@ const ChitFundForm: React.FC = () => {
             [name]: name === 'totalAmount' || name === 'maxParticipants' ? Number(value) : value,
         });
     };
-    function calculateEndDate(startDate: Date, duration: number): string {
-        
-        const endDate = new Date(startDate); // Create a new Date object to avoid mutating the original
-        endDate.setMonth(endDate.getMonth() + duration); 
-        console.log(startDate)
-        console.log(endDate)// Add the duration in months
-    
-        return endDate.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
-    }
+ 
     
 
     const token = sessionStorage.getItem('token');
@@ -53,7 +45,6 @@ const ChitFundForm: React.FC = () => {
     maxParticipants:formData.duration,
     duration:formData.duration,
     startDate:formData.startDate,
-    EndDate:calculateEndDate(formData.startDate, formData.duration),
     CreatorID:sessionStorage.getItem("userId"),
     Participants:formData.participants
 
@@ -72,48 +63,53 @@ const ChitFundForm: React.FC = () => {
     };
 
     return (
-        <div className="container-fluid px-1 py-5 mx-auto">
-            <div className="row d-flex justify-content-center">
-                <div className="col-xl-7 col-lg-8 col-md-9 col-11 text-center">
-                    <h3>Create a Chit Fund</h3>
-                    <div className="card">
-                        <form className="form-card" onSubmit={handleSubmit}>
-                            <div className="row justify-content-between text-left">
-                                <div className="form-group col-sm-6">
-                                    <label className="form-control-label px-3">Name<span className="text-danger"> *</span></label>
-                                    <input type="text" name="name" value={formData.name} onChange={handleChange} className="form-control" required />
-                                </div>
-                                <div className="form-group col-sm-6">
-                                    <label className="form-control-label px-3">Total Amount<span className="text-danger"> *</span></label>
-                                    <input type="number" name="totalAmount" value={formData.totalAmount} onChange={handleChange} className="form-control" required />
-                                </div>
-                            </div>
-                            <div className="row justify-content-between text-left">
-                                {/* <div className="form-group col-sm-6">
-                                    <label className="form-control-label px-3">Max Participants<span className="text-danger"> *</span></label>
-                                    <input type="number" name="maxParticipants" value={formData.maxParticipants} onChange={handleChange} className="form-control" required />
-                                </div> */}
-                                <div className="form-group col-sm-6">
-                                    <label className="form-control-label px-3">Duration<span className="text-danger"> *</span></label>
-                                    <input type="number" name="duration" value={formData.duration} onChange={handleChange} className="form-control" required />
-                                </div>
-                            </div>
-                            <div className="row justify-content-between text-left">
-                                <div className="form-group col-sm-6">
-                                    <label className="form-control-label px-3">Start Date<span className="text-danger"> *</span></label>
-                                    <input type="date" name="startDate" value={formData.startDate} onChange={handleChange} className="form-control" required />
-                                </div>
-                                </div>
-                            <div className="row justify-content-end">
-                                <div className="form-group col-sm-6">
-                                    <button type="submit" className="btn btn-primary btn-block">Create Chit Fund</button>
-                                </div>
-                            </div>
-                        </form>
+
+
+<div className="container-fluid px-1 py-5 mx-auto" style={{ maxWidth: '600px' }}>
+    <div className="row d-flex justify-content-center">
+        <div className="col-12 text-center">
+            {/* <h3 className="mb-4">Create a Chit Fund</h3> */}
+            <h3 
+    className="mb-4 fw-bold" 
+    style={{
+        fontSize: '2rem',
+        background: 'linear-gradient(to right, #4a90e2, #1c75bc)',
+        color: 'white',
+        padding: '0.5rem 1rem',
+        borderRadius: '8px',
+        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+        display: 'inline-block'
+    }}
+>
+    Create a Chit Fund
+</h3>
+
+            <div className="card p-4" style={{ borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                <form className="form-card" onSubmit={handleSubmit}>
+                    <div className="mb-4">
+                        <label htmlFor="name" className="form-label fw-bold">Name<span className="text-danger"> *</span></label>
+                        <input type="text" className="form-control rounded-pill" id="name" name="name" value={formData.name} onChange={handleChange} required />
                     </div>
-                </div>
+                    <div className="mb-4">
+                        <label htmlFor="totalAmount" className="form-label fw-bold">Total Amount<span className="text-danger"> *</span></label>
+                        <input type="number" className="form-control rounded-pill" id="totalAmount"  name="totalAmount" value={formData.totalAmount} onChange={handleChange} required />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="duration" className="form-label fw-bold">Duration<span className="text-danger"> *</span></label>
+                        <input type="number" className="form-control rounded-pill" id="duration" name="duration" value={formData.duration} onChange={handleChange} required />
+                    </div>
+                    <div className="mb-4">
+                        <label htmlFor="startDate" className="form-label fw-bold">Start Date<span className="text-danger"> *</span></label>
+                        <input type="date" className="form-control rounded-pill" id="startDate" name="startDate" value={formData.startDate} onChange={handleChange} required />
+                    </div>
+                    <button type="submit" className="btn btn-primary rounded-pill w-100" style={{ fontSize: '1.1rem' }}>Create Chit Fund</button>
+                </form>
             </div>
         </div>
+    </div>
+</div>
+
+
     );
 };
 

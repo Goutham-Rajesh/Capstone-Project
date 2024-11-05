@@ -1,4 +1,4 @@
-import { getChitfunds, getChitfundById , createChitfund, getchitfundByParticipantId, updateChitfundById, getchitfundByCreatorId, deleteChitfundById, removeParticipantFromChitfund, getParticipantEmails, getParticipantDetail } from "../Controller/ChitfundController";
+import { getChitfunds, getChitfundById , createChitfund, getchitfundByParticipantId, updateChitfundById, getchitfundByCreatorId, deleteChitfundById, removeParticipantFromChitfund, getParticipantEmails, getParticipantDetail, getListOfParticipantsByChitfundId } from "../Controller/ChitfundController";
 import express from "express";
 import axios from 'axios';
 
@@ -14,6 +14,8 @@ router.post("/updateChitFundById/:id", updateChitfundById);
 router.delete("/deleteChitFundById/:id", deleteChitfundById);
 router.get("/chitFund/participants/email/:id",getParticipantEmails);
 router.get("/chitFund/participantInfo/:id",getParticipantDetail);
+
+router.get("/chitFund/AllparticipantsInfo/:id",getListOfParticipantsByChitfundId);
 
 
 router.put("/removeParticipantFromChitfund/:id", removeParticipantFromChitfund);
