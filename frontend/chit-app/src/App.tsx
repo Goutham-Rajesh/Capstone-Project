@@ -14,6 +14,7 @@ import UserBidPage from './pages/UserBidPage';
 import Logout from './pages/Logout';
 import UserProfile from './pages/UserProfilePage';
 import MembersInfo from './pages/MemberInfo';
+import ChitCreatorProfileComponent from './pages/CreatorProfile';
 
 const App: React.FC = () => {
     const [role, setRole] = React.useState('');
@@ -76,6 +77,7 @@ const App: React.FC = () => {
                 <Route path="/MembersInfo" element={< MembersInfo/>} />
                 <Route path="/About" element={renderAbout()}/>
                 <Route path="/logout" element={< Logout/>} />
+                <Route path="/CreatorProfile" element={<ChitCreatorProfileComponent/>}/>
                 
             </Routes>
         </Router>
