@@ -180,7 +180,7 @@ const CreatorBidPage = () => {
             }
          }
 
-        if(!(bidAmount >=( amount * 0.5) && bidAmount <= (amount -(amount * 0.05)))&& !(emails.length==1)){
+        if(!(bidAmount >=( amount * 0.5) && bidAmount <= (amount -(amount * 0.05)))){
             alert(`Bid amount should be greater than  ${amount * 0.5} and less than ${(amount -(amount * 0.05))}`);
             return;
         }
