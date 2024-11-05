@@ -4,11 +4,14 @@ import { Container, Row, Col, Card, Spinner, Button, Form, Modal } from 'react-b
 import axios from 'axios';
 
 interface Chit {
-  _id: string;
-  name: string;
-  totalAmount: number;
-  participants: number;
-  commissionEarned: number; // New field for commission
+  _id:String,
+  name: String,
+  totalAmount:Number,
+  maxParticipants:Number,
+  duration:Number,
+  startDate:Date,
+  CreatorID:Number,
+  Participants:[Number]// New field for commission
 }
 
 interface Creator {
@@ -26,60 +29,66 @@ const ChitCreatorProfileComponent: React.FC = () => {
   const [totalChitsCreated, setTotalChitsCreated] = useState<number>(0);
   const [totalCommission, setTotalCommission] = useState<number>(0);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [showModal, setShowModal] = useState<boolean>(false); // State for modal visibility
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [toChits,setToChits] =useState<Chit[]>([])// State for modal visibility
 
   useEffect(() => {
     const fetchCreatorProfile = async () => {
       setLoading(true);
       
       // Hardcoded creator data
-      const hardcodedCreator: Creator = {
-        creatorId: 1,
-        name: 'John Doe',
-        email: 'john.doe@example.com',
-        phone: '123-456-7890',
-        profilePic: 'https://via.placeholder.com/150', // Placeholder profile picture
-        createdChits: [
-          { _id: '1', name: 'Chit Fund A', totalAmount: 10000, participants: 10, commissionEarned: 1000 },
-          { _id: '2', name: 'Chit Fund B', totalAmount: 15000, participants: 15, commissionEarned: 1500 },
-          { _id: '3', name: 'Chit Fund C', totalAmount: 20000, participants: 20, commissionEarned: 2000 },
-        ],
-      };
+      // const hardcodedCreator: Creator = {
+      //   creatorId: 1,
+      //   name: 'John Doe',
+      //   email: 'john.doe@example.com',
+      //   phone: '123-456-7890',
+      //   profilePic: 'https://via.placeholder.com/150', // Placeholder profile picture
+      //   createdChits: [
+      //     { _id: '1', name: 'Chit Fund A', totalAmount: 10000, participants: 10, commissionEarned: 1000 },
+      //     { _id: '2', name: 'Chit Fund B', totalAmount: 15000, participants: 15, commissionEarned: 1500 },
+      //     { _id: '3', name: 'Chit Fund C', totalAmount: 20000, participants: 20, commissionEarned: 2000 },
+      //   ],
+      // };
 
-      // Simulate API response delay
-      setTimeout(() => {
-        setCreator(hardcodedCreator);
-        setTotalChitsCreated(hardcodedCreator.createdChits.length);
-        const totalCommission = hardcodedCreator.createdChits.reduce((sum, chit) => sum + chit.commissionEarned, 0);
-        setTotalCommission(totalCommission);
-        setLoading(false);
-      }, 1000);
+      // // Simulate API response delay
+      // setTimeout(() => {
+      //   setCreator(hardcodedCreator);
+      //   setTotalChitsCreated(hardcodedCreator.createdChits.length);
+      //   const totalCommission = hardcodedCreator.createdChits.reduce((sum, chit) => sum + chit.commissionEarned, 0);
+      //   setTotalCommission(totalCommission);
+      //   setLoading(false);
+      // }, 1000);
 
       // Uncomment the following code to fetch data from an API
-      /*
-      const creatorId = sessionStorage.getItem('creatorId');
+      
+      const creatorId = sessionStorage.getItem('userId');
       const token = sessionStorage.getItem('token');
 
       try {
-        const creatorResponse = await axios.get<Creator>(`http://127.0.0.1:5000/creator/${creatorId}`, {
+        const creatorResponse = await axios.get<Creator>(`http://127.0.0.1:5000/user/${creatorId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
         setCreator(creatorResponse.data);
+      
+         const totalChitResponse = await axios.get(`http://127.0.0.1:5001/getChitFundByCreatorId/${creatorId}`);
 
-        const totalChitsCreated = creatorResponse.data.createdChits.length;
+        const totalChitsCreated = totalChitResponse.data.length;
+
         setTotalChitsCreated(totalChitsCreated);
+        setToChits(totalChitResponse.data)
 
-        const totalCommission = creatorResponse.data.createdChits.reduce((sum, chit) => sum + chit.commissionEarned, 0);
-        setTotalCommission(totalCommission);
+       // const totalCommission = creatorResponse.data.createdChits.reduce((sum, chit) => sum + chit.commissionEarned, 0);
+        //setTotalCommission(totalCommission);
       } catch (error) {
         console.error("Error fetching creator profile:", error);
       } finally {
         setLoading(false);
       }
-      */
+      
+
     };
 
     fetchCreatorProfile();
@@ -149,7 +158,7 @@ const ChitCreatorProfileComponent: React.FC = () => {
                   />
                 )}
                 <Card.Text>Email: {creator.email}</Card.Text>
-                <Card.Text>Phone: {creator.phone}</Card.Text>
+                <Card.Text>Phone: {creator.phone.slice(2)}</Card.Text>
                 <Button variant="primary" onClick={() => setShowModal(true)}>Upload Profile</Button>
               </Card.Body>
             </Card>
@@ -229,11 +238,11 @@ const ChitCreatorProfileComponent: React.FC = () => {
               <Card.Body>
                 <Card.Title>Created Chits</Card.Title>
                 <ul>
-                  {creator.createdChits.map(chit => (
-                    <li key={chit._id}>
-                      {chit.name} - ₹{chit.totalAmount} (Commission: ₹{chit.commissionEarned})
-                    </li>
-                  ))}
+                {toChits.map((chit, index) => (
+ <li key={index + 1}>
+ {chit.name} -- ₹{chit.totalAmount.toString()}
+</li>
+))}
                 </ul>
               </Card.Body>
             </Card>
