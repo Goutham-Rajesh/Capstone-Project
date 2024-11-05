@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Label } from 'recharts';
 import { Container, Row, Col, Card, Spinner, Button, Form, Modal } from 'react-bootstrap';
@@ -5,10 +6,27 @@ import axios from 'axios';
 
 interface ChitFund {
   _id: string;
-  name: string;
-  totalAmount: number;
-  participants: number;
-  creatorID: number;
+  name: string,
+  totalAmount:number,
+  maxParticipants:number,
+  duration:number,
+  startDate:Date,
+  CreatorID:number,
+  Participants:[number]
+}
+
+interface Bid {
+  ChitFundID: string;
+  UserID: string;
+  BidAmount: number;
+  BidDate: Date;
+}
+ type  info={
+  name:string,
+  shareReceived:number,
+  bidwon:number,
+  bidremaining:number,
+  amountpaid:number
 }
 
 interface User {
@@ -16,7 +34,7 @@ interface User {
   name: string;
   email: string;
   phone: string;
-  profilePic?: string; // Optional field for profile picture
+  profilePic?: string;
   joinedChitFunds: ChitFund[];
   availableChitFunds: ChitFund[];
 }
@@ -26,10 +44,11 @@ const UserProfileComponent: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [totalInvestment, setTotalInvestment] = useState<number>(0);
   const [totalProfit, setTotalProfit] = useState<number>(0);
-  const [joinedChitFunds, setJoinedChitFunds] = useState<ChitFund[]>([]);
-  const [availableChitFunds, setAvailableChitFunds] = useState<ChitFund[]>([]);
+  const [totalShareReceived, setTotalShareReceived] = useState<number>(0);
+  const [chitFundBidData, setChitFundBidData] = useState<Map<string, { chitFund: ChitFund; bids: Bid[] }>>(new Map());
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [showModal, setShowModal] = useState<boolean>(false); // State for modal visibility
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [details, setDetails] = useState<info[]>([])
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -38,48 +57,64 @@ const UserProfileComponent: React.FC = () => {
       const token = sessionStorage.getItem('token');
 
       try {
+        // Fetch chit funds the user has joined
         const joinedChitResponse = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFundByParticipantId/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         });
 
         const joinedChitFundsData = joinedChitResponse.data;
-        setJoinedChitFunds(joinedChitFundsData);
+        setTotalInvestment(joinedChitFundsData.reduce((sum, chit) => sum + chit.totalAmount, 0));
 
-        const totalInvestment = joinedChitFundsData.reduce((sum, chit) => sum + chit.totalAmount, 0);
-        setTotalInvestment(totalInvestment);
+        // Fetch bid data for each chit fund
+        const bidDataMap = new Map();
+        let totalShareReceived = 0;
 
-         // Fetch bid details to calculate total profit (currently commented out)
-        /*
-        const bidDetailsResponse = await axios.get<{ amountWon: number; totalInterest: number }[]>(`http://127.0.0.1:5001/getBiddetailsByParticipantId/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-        */
+       const detail:info[]=[]
+        for (const chit of joinedChitFundsData) {
+          const bidsResponse = await axios.get<Bid[]>(`http://localhost:5002/getBidByChitFundId/${chit._id}`, {
+            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          });
+          const bids = bidsResponse.data;
+          
+        //declate the variabel of info
+        const singledetail:info={name:'',shareReceived:0,bidwon:0,bidremaining:0}
+       
+          // Calculate user-paid and share-received values
+          
+          let shareReceived = 0;
 
-        const hardcodedTotalProfit = 5000; // Replace with actual logic if needed
-        setTotalProfit(hardcodedTotalProfit);
+          bids.forEach(bid => {
+            if (bid.UserID !== sessionStorage.getItem('userId')) {
+              shareReceived += ((chit.totalAmount - bid.BidAmount) - (bid.BidAmount * 0.05)) / (chit.maxParticipants-1);
+            }
+            else{
+              singledetail.bidwon=bid.BidAmount;
+              
+            }
+          });
+          singledetail.name=chit.name;
+          singledetail.bidremaining=chit.maxParticipants - bids.length;
+          singledetail.shareReceived=shareReceived
+          const userPaid = (chit.totalAmount / chit.maxParticipants) * bids.length;
+          singledetail.amountpaid=userPaid
 
-        const availableChitResponse = await axios.get<ChitFund[]>(`http://127.0.0.1:5001/getChitFunds`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+          // Update the total share received
+          totalShareReceived += shareReceived;
+          detail.push(singledetail);
 
-        const allChitFunds = availableChitResponse.data;
-        const availableChits = allChitFunds.filter(chit => !joinedChitFundsData.some(joined => joined._id === chit._id));
-        setAvailableChitFunds(availableChits);
+          // Store chit fund and bid data in map
+          bidDataMap.set(chit._id, { chitFund: chit, bids, userPaid, shareReceived });
+        }
 
+        setDetails(detail);
+        console.log(detail);
+
+        setTotalShareReceived(totalShareReceived);
+        setChitFundBidData(bidDataMap);
+
+        // Fetch user data
         const userResponse = await axios.get<User>(`http://127.0.0.1:5000/user/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         });
         setUser(userResponse.data);
 
@@ -97,15 +132,12 @@ const UserProfileComponent: React.FC = () => {
     return [
       { name: 'Investment', value: totalInvestment },
       { name: 'Profit', value: totalProfit },
+      { name: 'Share Received', value: totalShareReceived },
     ];
   };
 
-  const totalAmount = totalInvestment + totalProfit;
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setImageFile(event.target.files[0]);
-    }
+    if (event.target.files) setImageFile(event.target.files[0]);
   };
 
   const handleUpload = async () => {
@@ -117,14 +149,12 @@ const UserProfileComponent: React.FC = () => {
       try {
         const response = await axios.post('https://api.cloudinary.com/v1_1/dwabgca1d/image/upload', formData);
         const profilePicUrl = response.data.secure_url;
-
         await axios.patch(`http://127.0.0.1:5000/userProfile/${user?.userId}`, { profilePic: profilePicUrl });
-
         setUser(prevUser => (prevUser ? { ...prevUser, profilePic: profilePicUrl } : prevUser));
       } catch (error) {
         console.error('Error uploading image:', error);
       } finally {
-        setShowModal(false); // Close modal after upload
+        setShowModal(false);
       }
     }
   };
@@ -136,21 +166,14 @@ const UserProfileComponent: React.FC = () => {
       ) : (
         user && (
           <>
-            <Card className="mb-4">
-              <Card.Body style={{ textAlign: 'center' }}>
+            <Card className="mb-4 text-center">
+              <Card.Body>
                 <Card.Title>User Profile: {user.name}</Card.Title>
                 {user.profilePic && (
                   <img
                     src={user.profilePic}
                     alt="Profile"
-                    style={{
-                      width: '150px',
-                      height: '150px',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      objectPosition: 'top',
-                      marginBottom: '10px'
-                    }}
+                    style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', marginBottom: '10px' }}
                   />
                 )}
                 <Card.Text>Email: {user.email}</Card.Text>
@@ -159,7 +182,6 @@ const UserProfileComponent: React.FC = () => {
               </Card.Body>
             </Card>
 
-            {/* Modal for Upload */}
             <Modal show={showModal} onHide={() => setShowModal(false)}>
               <Modal.Header closeButton>
                 <Modal.Title>Upload Profile Picture</Modal.Title>
@@ -171,14 +193,41 @@ const UserProfileComponent: React.FC = () => {
                 </Form.Group>
               </Modal.Body>
               <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShowModal(false)}>
-                  Close
-                </Button>
-                <Button variant="primary" onClick={handleUpload}>
-                  Upload
-                </Button>
+                <Button variant="secondary" onClick={() => setShowModal(false)}>Close</Button>
+                <Button variant="primary" onClick={handleUpload}>Upload</Button>
               </Modal.Footer>
             </Modal>
+
+            <div className="chit-fund-list mt-4">
+      {details.map((detail, index) => (
+        <Card key={index} className="mb-3 shadow-sm">
+          <Card.Body>
+            <Card.Title className="text-center text-primary">
+              {detail.name}
+            </Card.Title>
+            <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex flex-column">
+                <strong>Bid Won</strong>
+                <p className="h5 text-success">{detail.bidwon}</p>
+              </div>
+              <div className="d-flex flex-column">
+                <strong>Share Received</strong>
+                <p className="h5">₹{detail.shareReceived.toFixed(2)}</p>
+              </div>
+             
+              <div className="d-flex flex-column">
+                <strong>Bids Remaining</strong>
+                <p className="h5">{detail.bidremaining}</p>
+              </div>
+              <div className="d-flex flex-column">
+                <strong>Amount Paid</strong>
+                <p className="h5">{detail.amountpaid}</p>
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
+      ))}
+    </div>
 
             <Row>
               <Col md={6}>
@@ -187,8 +236,7 @@ const UserProfileComponent: React.FC = () => {
                     <Card.Title>Investment Overview</Card.Title>
                     <Card.Text>Total Investment: ₹{totalInvestment}</Card.Text>
                     <Card.Text>Total Profit: ₹{totalProfit}</Card.Text>
-                    <Card.Text>Total Chits Joined: {joinedChitFunds.length}</Card.Text>
-                    <Card.Text>Available Chits to Join: {availableChitFunds.length}</Card.Text>
+                    <Card.Text>Total Share Received: ₹{totalShareReceived}</Card.Text>
                   </Card.Body>
                 </Card>
               </Col>
@@ -207,56 +255,21 @@ const UserProfileComponent: React.FC = () => {
                         dataKey="value"
                         label
                       >
-                        <Label
-                          value={`Total: ₹${totalAmount}`}
-                          position="center"
-                          style={{ fontSize: '16px', fontWeight: 'bold', fill: '#333' }}
-                        />
+                        <Label value={`Total: ₹${totalInvestment + totalProfit + totalShareReceived}`} position="center" style={{ fontSize: '16px', fontWeight: 'bold', fill: '#333' }} />
                         {renderPieChartData().map((_, index) => (
-                          <Cell key={`cell-${index}`} fill={index === 0 ? '#ff7300' : '#82ca9d'} />
+                          <Cell key={`cell-${index}`} fill={index === 0 ? '#ff7300' : index === 1 ? '#82ca9d' : '#8884d8'} />
                         ))}
                       </Pie>
                       <Tooltip />
                     </PieChart>
-
-                    <div className="d-flex justify-content-between mt-3">
-                      <div style={{ color: '#ff7300' }}>
-                        <strong>Investment:</strong> ₹{totalInvestment}
-                      </div>
-                      <div style={{ color: '#82ca9d' }}>
-                        <strong>Profit:</strong> ₹{totalProfit}
-                      </div>
-                    </div>
                   </Card.Body>
                 </Card>
               </Col>
             </Row>
 
-            <Card className="mb-4">
-              <Card.Body>
-                <Card.Title>Joined Chit Funds</Card.Title>
-                <ul>
-                  {joinedChitFunds.map(chit => (
-                    <li key={chit._id}>
-                      {chit.name} - ₹{chit.totalAmount}
-                    </li>
-                  ))}
-                </ul>
-              </Card.Body>
-            </Card>
+        
 
-            <Card>
-              <Card.Body>
-                <Card.Title>Available Chit Funds</Card.Title>
-                <ul>
-                  {availableChitFunds.map(chit => (
-                    <li key={chit._id}>
-                      {chit.name} - ₹{chit.totalAmount}
-                    </li>
-                  ))}
-                </ul>
-              </Card.Body>
-            </Card>
+  
           </>
         )
       )}

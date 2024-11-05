@@ -9,6 +9,5 @@ const ChitfundsSchema = new mongoose.Schema({
     CreatorID:Number,
     Participants:[Number]
 
-});
-
+})
 export const Chitfunds = mongoose.model('Chitfunds', ChitfundsSchema);
