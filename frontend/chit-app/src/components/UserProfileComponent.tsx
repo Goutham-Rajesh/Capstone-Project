@@ -229,14 +229,14 @@ const UserProfileComponent: React.FC = () => {
       ))}
     </div>
 
-            <Row>
+            {/* <Row>
               <Col md={6}>
                 <Card className="mb-4">
                   <Card.Body>
                     <Card.Title>Investment Overview</Card.Title>
                     <Card.Text>Total Investment: ₹{totalInvestment}</Card.Text>
                     <Card.Text>Total Profit: ₹{totalProfit}</Card.Text>
-                    <Card.Text>Total Share Received: ₹{totalShareReceived}</Card.Text>
+                    <Card.Text>Total Share Received: ₹{totalShareReceived.toString(2)}</Card.Text>
                   </Card.Body>
                 </Card>
               </Col>
@@ -265,7 +265,7 @@ const UserProfileComponent: React.FC = () => {
                   </Card.Body>
                 </Card>
               </Col>
-            </Row>
+            </Row> */}
 
         
 
